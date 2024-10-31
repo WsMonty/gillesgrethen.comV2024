@@ -1,0 +1,30 @@
+@use "../../globals/globals" as *;
+
+.footer {
+  height: 10%;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.104);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  position: relative;
+
+  .footer-logo {
+    cursor: pointer;
+
+    transition: 200ms ease-in-out;
+
+    &:hover {
+      color: $accent-color-pink;
+      scale: 1.1;
+    }
+  }
+
+  .footer-copyright {
+    position: absolute;
+    right: 1rem;
+  }
+}

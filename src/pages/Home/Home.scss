@@ -1,0 +1,70 @@
+@use "../../globals/globals" as *;
+
+.home {
+  min-height: 90vh;
+
+  .title {
+    font-size: 4rem;
+    width: 100%;
+    background-color: $main-text-color;
+    color: $main-bg-color;
+    padding-left: 2rem;
+    display: flex;
+    flex-direction: column;
+
+    .lastname {
+      padding-left: 10rem;
+    }
+  }
+
+  .headerImageContainer {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      margin: 0;
+      width: 100%;
+    }
+  }
+
+  .headerImageOverlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    font-size: 3rem;
+    max-width: 40%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 1rem;
+  }
+
+  .newsList {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+  }
+
+  .news {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .newsContent {
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+    gap: 1rem;
+    font-size: 1.25rem;
+  }
+
+  img {
+    width: 25%;
+    border-radius: $border-radius;
+    cursor: pointer;
+    margin-block: 1rem;
+  }
+}
