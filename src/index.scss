@@ -92,14 +92,18 @@ p {
 }
 
 @media (max-width: $mobile-breakpoint) {
-  *,
-  *::after,
-  *::before {
+  .link {
     &:hover {
-      all: unset !important;
-      transform: none !important;
-      color: inherit !important;
-      scale: 1 !important;
+      color: $accent-color-blue;
     }
+  }
+
+  .link::after {
+    content: "";
+    display: none;
+  }
+
+  .link:hover::after {
+    transform: scaleX(0);
   }
 }
