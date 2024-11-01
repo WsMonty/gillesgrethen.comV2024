@@ -49,6 +49,12 @@ function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
             // Handle post-payment processing (e.g., updating the UI, notifying the user)
           });
         }}
+        style={{
+          layout: "vertical",
+          color: "black",
+          shape: "rect",
+          label: "paypal",
+        }}
       />
     </PayPalScriptProvider>
   );

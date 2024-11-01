@@ -9,9 +9,9 @@ function Navbar() {
       <a className="navbar-link" href="/about">
         ABOUT
       </a>
-      {/* <a className="navbar-link" href="/music">
+      <a className="navbar-link" href="/music">
         MUSIC
-      </a> */}
+      </a>
       <a className="navbar-link" href="/shop">
         SHOP
       </a>

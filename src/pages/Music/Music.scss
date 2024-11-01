@@ -1,3 +1,71 @@
+@use "../../globals/globals.scss" as *;
+
 .music {
   min-height: 90vh;
+  padding: 2em;
+  padding-top: 6rem;
+
+  .descriptionPicture {
+    display: flex;
+    align-items: flex-start;
+    gap: 2em;
+    margin-bottom: 4em;
+
+    h2 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    .description {
+      width: 50%;
+    }
+
+    .imageAndLink {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1em;
+
+      .biggerLink {
+        font-size: 1.5rem;
+      }
+      img {
+        width: 90%;
+        height: 40vh;
+        object-fit: cover;
+        border-radius: $border-radius;
+        cursor: pointer;
+        margin-top: 1.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .music {
+    padding: 0;
+
+    .descriptionPicture {
+      flex-direction: column;
+      margin-bottom: 1rem;
+      gap: 0;
+
+      .description {
+        width: 100%;
+        padding: 1.5rem;
+      }
+
+      .imageAndLink {
+        width: 100%;
+        padding: 1rem;
+
+        img {
+          width: 100%;
+          height: unset;
+          margin-top: 0;
+        }
+      }
+    }
+  }
 }
