@@ -63,8 +63,17 @@
 
     .navbar-link {
       &:hover {
-        color: unset !important;
+        color: $accent-color-pink;
       }
+    }
+
+    .navbar-link::after {
+      content: "";
+      display: none;
+    }
+
+    .navbar-link:hover::after {
+      transform: scaleX(0);
     }
   }
 }
