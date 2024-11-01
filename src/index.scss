@@ -13,7 +13,7 @@
 
 body {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
 
   font-family: "Dosis", "Helvetica Neue", sans-serif;
   // font-family: "Anek Malayalam", sans-serif;
@@ -91,14 +91,15 @@ p {
   margin-block: 1rem;
 }
 
-.mobile {
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  max-width: 80%;
-  margin: 0 auto;
+@media (max-width: $mobile-breakpoint) {
+  *,
+  *::after,
+  *::before {
+    &:hover {
+      all: unset !important;
+      transform: none !important;
+      color: inherit !important;
+      scale: 1 !important;
+    }
+  }
 }

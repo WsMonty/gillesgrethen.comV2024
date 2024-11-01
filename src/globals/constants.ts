@@ -9,3 +9,5 @@ export const SHIPPING_COST_VINYL_DE = 4.79;
 export const SHIPPING_COST_VINYL_EU = 10.49;
 export const SHIPPING_COST_VINYL_UK_AND_IR = 15.49;
 export const SHIPPING_COST_VINYL_WORLD = 18.49;
+
+export const MOBILE_BREAKPOINT = 768;

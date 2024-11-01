@@ -141,6 +141,16 @@
   .shoppingCartItemTitle {
     font-size: 1.25rem;
   }
+
+  .shoppingCartClose {
+    cursor: pointer;
+  }
+
+  .shoppingCartHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .shoppingCartItem {
@@ -192,6 +202,7 @@
   width: 80%;
 
   transition: all 0.2s ease;
+
   &:hover {
     background-color: $accent-color-pink;
   }
@@ -205,4 +216,97 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .shop {
+    padding: 0.5rem;
+
+    .shopItems {
+      gap: 2rem;
+      .shopItem {
+        width: 100%;
+
+        .shopItemInfo {
+          .shopItemTitle {
+            margin-bottom: 2rem;
+          }
+
+          .shopItemPrice {
+            margin-top: 0.25rem;
+          }
+        }
+
+        .shopItemButton {
+          &:hover {
+            background-color: $accent-color-blue;
+          }
+        }
+      }
+    }
+
+    .shopShippingInfoMobile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .shopShippingInfoText {
+        white-space: nowrap;
+      }
+    }
+
+    .shopShippingInfo {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+
+      .shopShippingInfoText {
+        font-size: 1.3rem;
+      }
+
+      .shopShippingCostInfo {
+        font-size: 1.25rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      .shopShippingSelect {
+        width: 80%;
+      }
+    }
+  }
+
+  .shoppingCart {
+    position: fixed;
+    width: 80vw;
+    min-height: 50vh;
+    max-height: 70vh;
+    overflow-y: auto;
+    background-color: $main-text-color;
+    border-radius: $border-radius;
+    color: $main-bg-color;
+    padding: 1rem;
+    z-index: 100;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .shoppingCartItemTitle {
+      font-size: 1.25rem;
+    }
+  }
+
+  .shoppingCartItemControls {
+    .shoppingCartItemControl {
+      &:hover,
+      &:focus {
+        color: $accent-color-blue;
+        scale: 1;
+      }
+    }
+  }
 }

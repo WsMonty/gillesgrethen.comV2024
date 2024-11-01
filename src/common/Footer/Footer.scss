@@ -1,7 +1,7 @@
 @use "../../globals/globals" as *;
 
 .footer {
-  height: 10%;
+  height: 4rem;
   width: 100%;
   border-top: 1px solid rgba(255, 255, 255, 0.104);
 
@@ -26,5 +26,19 @@
   .footer-copyright {
     position: absolute;
     right: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    justify-content: flex-start;
+    padding-left: 2rem;
+
+    .footer-logo {
+      &:hover {
+        color: unset !important;
+        scale: unset !important;
+      }
+    }
   }
 }

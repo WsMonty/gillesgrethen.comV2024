@@ -50,3 +50,21 @@
 .navbar-link:hover::after {
   transform: scaleX(1);
 }
+
+@media (max-width: $mobile-breakpoint) {
+  .navbar {
+    // background-color: $main-text-color;
+    background-color: black;
+
+    height: 3rem;
+    margin: 0;
+    padding: 0.5rem;
+    justify-content: space-evenly;
+
+    .navbar-link {
+      &:hover {
+        color: unset !important;
+      }
+    }
+  }
+}

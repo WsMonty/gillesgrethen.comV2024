@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Shop.scss";
 import { getShopItems } from "../../contentful";
 import {
+  MOBILE_BREAKPOINT,
   SHIPPING_COST_CD_DE,
   SHIPPING_COST_CD_EU,
   SHIPPING_COST_CD_UK_AND_IR,
@@ -14,6 +15,7 @@ import {
 import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from "react-icons/fa";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { IoMdClose } from "react-icons/io";
 
 function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
   return (
@@ -53,6 +55,8 @@ function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
 }
 
 function Shop() {
+  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
   const [shippingDestination, setShippingDestination] = useState<string>("de");
 
@@ -163,19 +167,40 @@ function Shop() {
         ></div>
       )}
       <div className="shopShippingInfo">
-        <p className="shopShippingInfoText">Shipping to:</p>
-        <select
-          className="shopShippingSelect"
-          onChange={handleShippingChange}
-          value={shippingDestination}
-          name="shipping"
-          id="shipping"
-        >
-          <option value="de">Germany</option>
-          <option value="eu">Europe (other than Germany)</option>
-          <option value="uk">UK & Ireland</option>
-          <option value="world">World</option>
-        </select>
+        {isMobile ? (
+          <div className="shopShippingInfoMobile">
+            <p className="shopShippingInfoText">Shipping to:</p>
+            <select
+              className="shopShippingSelect"
+              onChange={handleShippingChange}
+              value={shippingDestination}
+              name="shipping"
+              id="shipping"
+            >
+              <option value="de">Germany</option>
+              <option value="eu">Europe (other than Germany)</option>
+              <option value="uk">UK & Ireland</option>
+              <option value="world">World</option>
+            </select>
+          </div>
+        ) : (
+          <>
+            <p className="shopShippingInfoText">Shipping to:</p>
+            <select
+              className="shopShippingSelect"
+              onChange={handleShippingChange}
+              value={shippingDestination}
+              name="shipping"
+              id="shipping"
+            >
+              <option value="de">Germany</option>
+              <option value="eu">Europe (other than Germany)</option>
+              <option value="uk">UK & Ireland</option>
+              <option value="world">World</option>
+            </select>
+          </>
+        )}
+
         <p className="shopShippingCostInfo shopShippingCostInfoText">
           Total shipping cost: {shippingCost}€
         </p>
@@ -193,6 +218,14 @@ function Shop() {
           className="shoppingCart"
           style={{ display: isShoppingCartOpen ? "flex" : "none" }}
         >
+          <div className="shoppingCartHeader">
+            <h2>Shopping Cart</h2>
+            <IoMdClose
+              className="shoppingCartClose"
+              size={24}
+              onClick={() => setIsShoppingCartOpen(false)}
+            />
+          </div>
           {[...new Set(shoppingCart)]
             .sort((a, b) => b - a)
             .map((id) => {

@@ -61,7 +61,7 @@
     font-size: 1.25rem;
   }
 
-  img {
+  .image-hover {
     width: 25%;
     border-radius: $border-radius;
     cursor: pointer;
@@ -69,10 +69,64 @@
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: $mobile-breakpoint) {
   .home {
-    .headerImageOverlay {
-      max-width: 100%;
+    .title {
+      font-size: 1.5rem;
+      padding-top: 4rem;
+      padding-bottom: 2rem;
+      background-color: black;
+      color: $main-text-color;
+      z-index: 10;
+    }
+
+    .mobileHeader {
+      background-color: black;
+      padding-top: 9rem;
+      padding-bottom: 3rem;
+      position: relative;
+
+      p {
+        position: absolute;
+        top: 3rem;
+        right: 0;
+        max-width: 70%;
+        font-size: 1.2rem;
+        text-align: end;
+        padding-right: 0.5rem;
+      }
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .newsList {
+      width: 100%;
+
+      .news {
+        display: block;
+
+        .newsText {
+          font-size: 1rem;
+          padding-bottom: 1rem;
+        }
+      }
+
+      .mobileNewsAction {
+        display: flex;
+        align-items: center;
+      }
+
+      img {
+        width: 40%;
+        height: 40%;
+        margin: 0;
+      }
+
+      .newsContent {
+        padding-top: 0;
+      }
     }
   }
 }

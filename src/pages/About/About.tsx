@@ -45,16 +45,18 @@ function About() {
         <>
           <div className="bioContainer">
             <div className="bio">
-              {documentToReactComponents(data.bio.json, options)}
+              <div className="bioText">
+                {documentToReactComponents(data.bio.json, options)}
+              </div>
               <div className="contact">
                 <h2>Contact</h2>
                 <h3>{data?.name}</h3>
-                <p>
+                <div>
                   <a href={`mailto:${data?.email}`} className="email">
                     <span className="link">{data?.email}</span>
                   </a>
-                </p>
-                <p>{data?.phone}</p>
+                  <p>{data?.phone}</p>
+                </div>
               </div>
             </div>
             {data.picturesCollection.items[0] && (
@@ -64,6 +66,7 @@ function About() {
                 alt={data.picturesCollection.items[0].description}
               />
             )}
+            <div className="mobileBioImageBlackPadding"></div>
           </div>
           <div className="pictures"></div>
         </>
