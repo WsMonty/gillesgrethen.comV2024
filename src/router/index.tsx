@@ -4,6 +4,8 @@ import Home from "../pages/Home/Home";
 import Music from "../pages/Music/Music";
 import Shop from "../pages/Shop/Shop";
 import About from "../pages/About/About";
+import Chroma from "../pages/Chroma/Chroma";
+import Blog from "../pages/Blog/Blog";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
       {
         path: "/shop",
         element: <Shop />,
+      },
+      {
+        path: "/chroma",
+        element: <Chroma />,
+      },
+      {
+        path: "/blog",
+        element: <Blog />,
       },
     ],
   },

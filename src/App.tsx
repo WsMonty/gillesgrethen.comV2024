@@ -3,9 +3,11 @@ import Navbar from "./common/Navbar/Navbar";
 import Footer from "./common/Footer/Footer";
 
 function App() {
+  const location = window.location.pathname;
+
   return (
     <>
-      <Navbar />
+      {location !== "/blog" && location !== "/chroma" && <Navbar />}
       <Outlet />
       <Footer />
     </>

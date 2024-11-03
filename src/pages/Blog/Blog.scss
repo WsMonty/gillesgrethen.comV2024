@@ -1,0 +1,32 @@
+@import "../../globals/globals.scss";
+
+.blog {
+  min-height: 90vh;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+
+  .blogPost {
+    max-width: 55%;
+    margin: 0 auto;
+
+    h2 {
+      font-size: 2.5rem;
+    }
+
+    .blogPostInfo {
+      display: flex;
+      gap: 1rem;
+      margin-block: 0.25rem 1rem;
+    }
+  }
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .blog {
+    .blogPost {
+      max-width: 100%;
+    }
+  }
+}
