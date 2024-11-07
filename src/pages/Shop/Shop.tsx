@@ -43,7 +43,6 @@ function PayPalCheckout({
       <PayPalButtons
         key={totalPrice}
         createOrder={(_data, actions) => {
-          console.log(allArticles);
           return actions.order.create({
             intent: "CAPTURE",
             purchase_units: [
