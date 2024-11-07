@@ -42,6 +42,19 @@ function Chroma() {
           </p>
           <img src={chromaImage2} alt="chroma duo portrait" />
         </div>
+        <div className="chromaBooking">
+          <h2>Booking:</h2>
+          <p>
+            For booking and press inquiries please contact:{" "}
+            <a
+              className="link"
+              href="mailto:grethen.gilles@gmail.com"
+              target="_blank"
+            >
+              grethen.gilles@gmail.com
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

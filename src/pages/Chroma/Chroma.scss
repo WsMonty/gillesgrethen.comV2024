@@ -50,6 +50,21 @@
   }
 }
 
+.chromaBooking {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  gap: 1rem;
+  padding: 1rem;
+  padding-top: 2rem;
+  font-size: 2rem;
+
+  p {
+    font-size: 1.5rem;
+  }
+}
+
 @media (max-width: $mobile-breakpoint) {
   .chroma {
     .chromaContent {
@@ -78,5 +93,10 @@
         }
       }
     }
+  }
+
+  .chromaBooking {
+    padding: 0rem;
+    padding-top: 2rem;
   }
 }
