@@ -17,7 +17,22 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { IoMdClose } from "react-icons/io";
 
-function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
+function PayPalCheckout({
+  totalPrice,
+  allArticles,
+  onSuccess,
+}: {
+  totalPrice: string;
+  allArticles: {
+    description: string;
+    amount: {
+      currency_code: string;
+      value: number;
+    };
+    quantity: number;
+  }[];
+  onSuccess: (name: string) => void;
+}) {
   return (
     <PayPalScriptProvider
       options={{
@@ -28,6 +43,7 @@ function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
       <PayPalButtons
         key={totalPrice}
         createOrder={(_data, actions) => {
+          console.log(allArticles);
           return actions.order.create({
             intent: "CAPTURE",
             purchase_units: [
@@ -35,7 +51,21 @@ function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
                 amount: {
                   currency_code: "EUR",
                   value: totalPrice,
+                  breakdown: {
+                    item_total: {
+                      currency_code: "EUR",
+                      value: totalPrice,
+                    },
+                  },
                 },
+                items: allArticles.map((article) => ({
+                  name: article.description,
+                  unit_amount: {
+                    currency_code: "EUR",
+                    value: article.amount.value.toString(),
+                  },
+                  quantity: article.quantity.toString(),
+                })),
               },
             ],
           });
@@ -45,8 +75,7 @@ function PayPalCheckout({ totalPrice }: { totalPrice: string }) {
             return Promise.reject("Order actions not available");
           return actions.order.capture().then((details) => {
             const payerName = details?.payer?.name?.given_name || "customer";
-            console.log("Transaction completed by " + payerName);
-            // Handle post-payment processing (e.g., updating the UI, notifying the user)
+            onSuccess(payerName);
           });
         }}
         style={{
@@ -70,6 +99,8 @@ function Shop() {
     JSON.parse(localStorage.getItem("shoppingCart") || "[]")
   );
   const [isShoppingCartOpen, setIsShoppingCartOpen] = useState<boolean>(false);
+
+  const [clientName, setClientName] = useState<string | null>(null);
 
   useEffect(() => {
     getShopItems()
@@ -164,8 +195,33 @@ function Shop() {
     // }
   }, [shoppingCart]);
 
+  const handlePayPalSuccess = (name: string) => {
+    setIsShoppingCartOpen(false);
+    setShoppingCart([]);
+    setClientName(name ?? "");
+  };
+
   return (
     <div className="shop">
+      {clientName && (
+        <div className="successModal">
+          <h2>
+            {clientName !== ""
+              ? `Thank you, ${clientName}, for your purchase!`
+              : "Thank you for your purchase!"}
+          </h2>
+          <p>
+            I will prepare and send your order as fast as possible. Check your
+            emails for the shipping details.
+          </p>
+          <p>
+            <b>And thank you so much for supporting me!</b>
+          </p>
+          <div className="closeModal" onClick={() => setClientName(null)}>
+            Close
+          </div>
+        </div>
+      )}
       {isShoppingCartOpen && (
         <div
           className="overlay"
@@ -277,7 +333,32 @@ function Shop() {
               );
             })}
           {shoppingCart.length > 0 && (
-            <PayPalCheckout totalPrice={totalPrice} />
+            <PayPalCheckout
+              totalPrice={totalPrice}
+              allArticles={[
+                ...[...new Set(shoppingCart)].map((id) => {
+                  const item = shopItems.find((item) => item.id === id);
+                  return {
+                    description: item?.title || "",
+                    amount: {
+                      currency_code: "EUR",
+                      value: item?.price || 0,
+                    },
+                    quantity: shoppingCart.filter((itemId) => itemId === id)
+                      .length,
+                  };
+                }),
+                {
+                  description: "Shipping",
+                  amount: {
+                    currency_code: "EUR",
+                    value: getShippingCost(shippingDestination),
+                  },
+                  quantity: 1,
+                },
+              ]}
+              onSuccess={handlePayPalSuccess}
+            />
           )}
         </div>
       </div>
