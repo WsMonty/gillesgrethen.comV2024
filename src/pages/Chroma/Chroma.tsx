@@ -11,8 +11,24 @@ function Chroma() {
         <div className="chromaCD">
           <img src={chromaCD} alt="chroma cd cover" />
           <p>
-            Chroma's debut album will be available on all streaming platforms
-            starting November 8th, 2024!
+            Chroma's debut album is out now!
+            <br />
+            <br />
+            <a
+              className="link"
+              href="https://album.link/chroma"
+              target="_blank"
+            >
+              Stream it here!
+            </a>
+            <p>or</p>
+            <a
+              className="link"
+              href="https://gillesgrethen.com/shop"
+              target="_blank"
+            >
+              Buy it here!
+            </a>
           </p>
         </div>
         <div className="chromaText">
