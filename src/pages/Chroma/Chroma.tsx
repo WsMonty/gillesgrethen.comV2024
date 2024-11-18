@@ -1,7 +1,7 @@
 import "./Chroma.scss";
-import chromaImage from "../../assets/chroma.png";
-import chromaImage2 from "../../assets/chroma2.png";
-import chromaCD from "../../assets/chroma_cd.png";
+import chromaImage from "../../assets/chroma.jpg";
+import chromaImage2 from "../../assets/chroma2.jpg";
+import chromaCD from "../../assets/chroma_cd.jpg";
 
 function Chroma() {
   return (
