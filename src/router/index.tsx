@@ -6,6 +6,7 @@ import Shop from "../pages/Shop/Shop";
 import About from "../pages/About/About";
 import Chroma from "../pages/Chroma/Chroma";
 import Blog from "../pages/Blog/Blog";
+import Gigs from "../pages/Music/Gigs";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/blog",
         element: <Blog />,
+      },
+      {
+        path: "/gigs",
+        element: <Gigs />,
       },
     ],
   },

@@ -5,6 +5,96 @@
   padding: 2em;
   padding-top: 6rem;
 
+  .gigs {
+    margin-bottom: 4em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2em;
+    width: 100%;
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    .gigsList {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2em;
+      width: 60%;
+      padding-left: 2rem;
+
+      .gigInfo {
+        display: flex;
+        gap: 2em;
+        width: 100%;
+
+        margin-bottom: 2rem;
+      }
+
+      .gigDate {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 15%;
+        height: 6rem;
+        color: $accent-color-blue;
+
+        border: 0.25px solid $accent-color-blue;
+        border-radius: $border-radius;
+      }
+
+      hr {
+        border: none;
+        height: 0.5px;
+        background-color: $accent-color-blue;
+        width: 100%;
+      }
+
+      .seeMoreGigs {
+        cursor: pointer;
+        width: fit-content;
+        color: $accent-color-blue;
+        padding: 0.5rem 1rem;
+        border: 0.5px solid $accent-color-blue;
+        border-radius: $border-radius;
+
+        transition: all 0.3s ease;
+
+        align-self: center;
+
+        &:hover {
+          background-color: $accent-color-blue;
+          color: $main-bg-color;
+        }
+      }
+    }
+
+    .gigSummary {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      width: 85%;
+      color: $accent-color-pink;
+
+      .gigTitle {
+        font-size: 1.5rem;
+      }
+    }
+
+    .gigLocation {
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    .gigDescription {
+      width: fit-content;
+      cursor: pointer;
+    }
+  }
+
   .descriptionPicture {
     display: flex;
     align-items: flex-start;
@@ -45,6 +135,17 @@
 @media (max-width: $mobile-breakpoint) {
   .music {
     padding: 0;
+
+    .gigs {
+      padding: 1.5rem;
+      margin-bottom: 0;
+
+      .gigsList {
+        width: 90%;
+        margin: 0;
+        padding: 0;
+      }
+    }
 
     .descriptionPicture {
       flex-direction: column;

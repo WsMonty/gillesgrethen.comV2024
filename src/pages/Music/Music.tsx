@@ -4,6 +4,8 @@ import { BLOCKS, Document, INLINES } from "@contentful/rich-text-types";
 import { getProjects } from "../../contentful";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { MOBILE_BREAKPOINT } from "../../globals/constants";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 interface Project {
   name: string;
@@ -14,7 +16,31 @@ interface Project {
 }
 
 function Music() {
+  const navigate = useNavigate();
+
   const [projects, setProjects] = useState<Project[]>([]);
+  const [gigs, setGigs] = useState<GigInfo[]>([]);
+
+  useEffect(() => {
+    fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/8e6676d71abf0788902ff814252440ccbe5904a9e030a5692e7bed826ccfd09a@group.calendar.google.com/events?key=${
+        import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY
+      }`
+    )
+      .then((response) => response.json())
+      .then((data: Gigs) =>
+        setGigs(
+          data.items
+            .filter((gig: GigInfo) =>
+              dayjs(gig.start.dateTime).isAfter(dayjs().subtract(1, "week"))
+            )
+            .sort((a: GigInfo, b: GigInfo) =>
+              dayjs(a.start.dateTime).isBefore(dayjs(b.start.dateTime)) ? -1 : 1
+            )
+        )
+      )
+      .catch((error) => console.log(error));
+  }, []);
 
   useEffect(() => {
     getProjects()
@@ -53,35 +79,97 @@ function Music() {
     },
   };
 
+  const goToMaps = (location: string) => {
+    window.open(`https://www.google.com/maps/search/${location}`, "_blank");
+  };
+
+  const openLink = (link: string) => {
+    window.open(link, "_blank");
+  };
+
   return (
     <div className="music">
-      {projects
-        .sort((a, b) => a.id - b.id)
-        .map((project) => (
-          <div key={project.name}>
-            <div className="descriptionPicture">
-              <div className="description">
-                <h2>{project.name}</h2>
-                {documentToReactComponents(project.description.json, options)}
-              </div>
-              <div className="imageAndLink">
-                <img
-                  src={project.image.url}
-                  alt={project.name}
-                  onClick={() => window.open(project.link, "_blank")}
-                />
-                <a
-                  className="link biggerLink"
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Get more info about {project.name}!
-                </a>
+      {gigs && gigs.length > 0 && (
+        <div className="gigs">
+          <h2>Upcoming concerts</h2>
+          <div className="gigsList">
+            {gigs.slice(0, 3).map((gig, index) => {
+              const date = dayjs(gig.start.dateTime);
+
+              const link = (gig.description as string).match(
+                /<a href="([^"]+)"/
+              )?.[1];
+
+              return (
+                <div key={gig.id}>
+                  <div className="gigInfo">
+                    <div className="gigDate">
+                      <p>{date.format("MMM")}</p>
+                      <p>{date.format("D")}</p>
+                    </div>
+                    <div className="gigSummary">
+                      <h3 className="gigTitle">{gig.summary}</h3>
+                      {link && (
+                        <div>
+                          <p
+                            className="linkBlue gigDescription"
+                            onClick={() => openLink(link)}
+                          >
+                            Tickets and more info
+                          </p>
+                        </div>
+                      )}
+
+                      {gig.location && (
+                        <p
+                          className="linkBlue gigLocation"
+                          onClick={() => goToMaps(gig.location)}
+                        >
+                          Show on Google Maps
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {index !== gigs.length - 1 && <hr />}
+                </div>
+              );
+            })}
+            {gigs.length > 3 && (
+              <p className=" seeMoreGigs" onClick={() => navigate("/gigs")}>
+                See more gigs
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+      {projects &&
+        projects
+          .sort((a, b) => a.id - b.id)
+          .map((project) => (
+            <div key={project.name}>
+              <div className="descriptionPicture">
+                <div className="description">
+                  <h2>{project.name}</h2>
+                  {documentToReactComponents(project.description.json, options)}
+                </div>
+                <div className="imageAndLink">
+                  <img
+                    src={project.image.url}
+                    alt={project.name}
+                    onClick={() => window.open(project.link, "_blank")}
+                  />
+                  <a
+                    className="link biggerLink"
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get more info about {project.name}!
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
     </div>
   );
 }
