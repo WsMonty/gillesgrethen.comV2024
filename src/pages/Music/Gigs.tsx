@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import "./Music.scss";
+import Gig from "./Gig";
 
 const Gigs = () => {
   const [gigs, setGigs] = useState<GigInfo[]>([]);
@@ -26,66 +27,48 @@ const Gigs = () => {
       .catch((error) => console.log(error));
   }, []);
 
-  const goToMaps = (location: string) => {
-    window.open(`https://www.google.com/maps/search/${location}`, "_blank");
-  };
-
-  const openLink = (link: string) => {
-    window.open(link, "_blank");
-  };
-
   return (
     <div className="music">
       {gigs && gigs.length > 0 && (
         <div className="gigs">
           <h2>All upcoming concerts</h2>
           <div className="gigsList">
-            {gigs.map((gig, index) => {
-              const date = dayjs(gig.start.dateTime);
-
-              const link = gig.description
-                ? gig.description.match(/<a href="([^"]+)"/)?.[1]
-                : null;
-
-              return (
-                <div key={gig.id}>
-                  <div className="gigInfo">
-                    <div className="gigDate">
-                      <p>{date.format("MMM")}</p>
-                      <p>{date.format("D")}</p>
-                    </div>
-                    <div className="gigSummary">
-                      <h3 className="gigTitle">{gig.summary}</h3>
-                      {link ? (
-                        <div>
-                          <p
-                            className="linkBlue gigDescription"
-                            onClick={() => openLink(link)}
-                          >
-                            Tickets and more info
-                          </p>
-                        </div>
-                      ) : (
-                        <div>
-                          <p className="gigTBA">More infos will come!</p>
-                        </div>
-                      )}
-
-                      {gig.location && (
-                        <p
-                          className="linkBlue gigLocation"
-                          onClick={() => goToMaps(gig.location)}
-                        >
-                          Show on Google Maps
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {index !== gigs.length - 1 && <hr />}
-                </div>
-              );
-            })}
+            <h2>{dayjs().format("YYYY")}</h2>
+            {gigs
+              .filter(
+                (gig) => dayjs(gig.start.dateTime).year() === dayjs().year()
+              )
+              .map((gig, index) => (
+                <Gig
+                  key={index}
+                  gig={gig}
+                  index={index}
+                  gigsTotalLength={gigs.length}
+                />
+              ))}
           </div>
+          {gigs.some(
+            (gig) =>
+              dayjs(gig.start.dateTime).year() === dayjs().add(1, "year").year()
+          ) && (
+            <div className="gigsList">
+              <h2>{dayjs().add(1, "year").format("YYYY")}</h2>
+              {gigs
+                .filter(
+                  (gig) =>
+                    dayjs(gig.start.dateTime).year() ===
+                    dayjs().add(1, "year").year()
+                )
+                .map((gig, index) => (
+                  <Gig
+                    key={index}
+                    gig={gig}
+                    index={index}
+                    gigsTotalLength={gigs.length}
+                  />
+                ))}
+            </div>
+          )}
         </div>
       )}
     </div>

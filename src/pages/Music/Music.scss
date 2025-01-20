@@ -44,6 +44,10 @@
 
         border: 0.25px solid $accent-color-blue;
         border-radius: $border-radius;
+
+        p {
+          white-space: nowrap;
+        }
       }
 
       hr {
@@ -148,6 +152,11 @@
         width: 90%;
         margin: 0;
         padding: 0;
+      }
+
+      .gigDate {
+        flex-direction: column;
+        padding-inline: 2rem;
       }
     }
 

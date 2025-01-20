@@ -6,6 +6,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { MOBILE_BREAKPOINT } from "../../globals/constants";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import Gig from "./Gig";
 
 interface Project {
   name: string;
@@ -79,14 +80,6 @@ function Music() {
     },
   };
 
-  const goToMaps = (location: string) => {
-    window.open(`https://www.google.com/maps/search/${location}`, "_blank");
-  };
-
-  const openLink = (link: string) => {
-    window.open(link, "_blank");
-  };
-
   return (
     <div className="music">
       {gigs && gigs.length > 0 && (
@@ -94,44 +87,13 @@ function Music() {
           <h2>Upcoming concerts</h2>
           <div className="gigsList">
             {gigs.slice(0, 3).map((gig, index) => {
-              const date = dayjs(gig.start.dateTime);
-
-              const link = (gig.description as string).match(
-                /<a href="([^"]+)"/
-              )?.[1];
-
               return (
-                <div key={gig.id}>
-                  <div className="gigInfo">
-                    <div className="gigDate">
-                      <p>{date.format("MMM")}</p>
-                      <p>{date.format("D")}</p>
-                    </div>
-                    <div className="gigSummary">
-                      <h3 className="gigTitle">{gig.summary}</h3>
-                      {link && (
-                        <div>
-                          <p
-                            className="linkBlue gigDescription"
-                            onClick={() => openLink(link)}
-                          >
-                            Tickets and more info
-                          </p>
-                        </div>
-                      )}
-
-                      {gig.location && (
-                        <p
-                          className="linkBlue gigLocation"
-                          onClick={() => goToMaps(gig.location)}
-                        >
-                          Show on Google Maps
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {index !== gigs.length - 1 && <hr />}
-                </div>
+                <Gig
+                  key={index}
+                  gig={gig}
+                  index={index}
+                  gigsTotalLength={gigs.length}
+                />
               );
             })}
             {gigs.length > 3 && (
