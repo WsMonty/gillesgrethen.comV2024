@@ -43,9 +43,9 @@ const Gigs = () => {
             {gigs.map((gig, index) => {
               const date = dayjs(gig.start.dateTime);
 
-              const link = (gig.description as string).match(
-                /<a href="([^"]+)"/
-              )?.[1];
+              const link = gig.description
+                ? gig.description.match(/<a href="([^"]+)"/)?.[1]
+                : null;
 
               return (
                 <div key={gig.id}>
@@ -56,7 +56,7 @@ const Gigs = () => {
                     </div>
                     <div className="gigSummary">
                       <h3 className="gigTitle">{gig.summary}</h3>
-                      {link && (
+                      {link ? (
                         <div>
                           <p
                             className="linkBlue gigDescription"
@@ -64,6 +64,10 @@ const Gigs = () => {
                           >
                             Tickets and more info
                           </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="gigTBA">More infos will come!</p>
                         </div>
                       )}
 
