@@ -38,7 +38,12 @@ function About() {
       },
       [INLINES.HYPERLINK]: (node: any, children: any) => {
         return (
-          <a href={node.data.uri} className="link">
+          <a
+            href={node.data.uri}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link"
+          >
             {children}
           </a>
         );
