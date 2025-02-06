@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./About.scss";
 import { getAbout } from "../../contentful";
-import { Document, BLOCKS } from "@contentful/rich-text-types";
+import { Document, BLOCKS, INLINES } from "@contentful/rich-text-types";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
 interface About {
@@ -35,6 +35,13 @@ function About() {
     renderNode: {
       [BLOCKS.PARAGRAPH]: (_node: any, children: any) => {
         return <p style={{ marginBottom: "1em" }}>{children}</p>;
+      },
+      [INLINES.HYPERLINK]: (node: any, children: any) => {
+        return (
+          <a href={node.data.uri} className="link">
+            {children}
+          </a>
+        );
       },
     },
   };
