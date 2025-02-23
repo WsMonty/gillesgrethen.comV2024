@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import "./Shop.scss";
-import { getShopItems } from "../../contentful";
+import { useEffect, useState, useCallback } from 'react';
+import './Shop.scss';
+import { getShopItems } from '../../contentful';
 import {
   MOBILE_BREAKPOINT,
   SHIPPING_COST_CD_DE,
@@ -11,11 +11,11 @@ import {
   SHIPPING_COST_VINYL_EU,
   SHIPPING_COST_VINYL_UK_AND_IR,
   SHIPPING_COST_VINYL_WORLD,
-} from "../../globals/constants";
-import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from "react-icons/fa";
-import { PayPalButtons } from "@paypal/react-paypal-js";
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { IoMdClose } from "react-icons/io";
+} from '../../globals/constants';
+import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
+import { PayPalButtons } from '@paypal/react-paypal-js';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { IoMdClose } from 'react-icons/io';
 
 function PayPalCheckout({
   totalPrice,
@@ -37,22 +37,22 @@ function PayPalCheckout({
     <PayPalScriptProvider
       options={{
         clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-        currency: "EUR",
+        currency: 'EUR',
       }}
     >
       <PayPalButtons
         key={totalPrice}
         createOrder={(_data, actions) => {
           return actions.order.create({
-            intent: "CAPTURE",
+            intent: 'CAPTURE',
             purchase_units: [
               {
                 amount: {
-                  currency_code: "EUR",
+                  currency_code: 'EUR',
                   value: totalPrice,
                   breakdown: {
                     item_total: {
-                      currency_code: "EUR",
+                      currency_code: 'EUR',
                       value: totalPrice,
                     },
                   },
@@ -60,7 +60,7 @@ function PayPalCheckout({
                 items: allArticles.map((article) => ({
                   name: article.description,
                   unit_amount: {
-                    currency_code: "EUR",
+                    currency_code: 'EUR',
                     value: article.amount.value.toString(),
                   },
                   quantity: article.quantity.toString(),
@@ -71,17 +71,17 @@ function PayPalCheckout({
         }}
         onApprove={(_data, actions) => {
           if (!actions.order)
-            return Promise.reject("Order actions not available");
+            return Promise.reject('Order actions not available');
           return actions.order.capture().then((details) => {
-            const payerName = details?.payer?.name?.given_name || "customer";
+            const payerName = details?.payer?.name?.given_name || 'customer';
             onSuccess(payerName);
           });
         }}
         style={{
-          layout: "vertical",
-          color: "black",
-          shape: "rect",
-          label: "paypal",
+          layout: 'vertical',
+          color: 'black',
+          shape: 'rect',
+          label: 'paypal',
         }}
       />
     </PayPalScriptProvider>
@@ -92,10 +92,10 @@ function Shop() {
   const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
 
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
-  const [shippingDestination, setShippingDestination] = useState<string>("de");
+  const [shippingDestination, setShippingDestination] = useState<string>('de');
 
   const [shoppingCart, setShoppingCart] = useState<number[]>(
-    JSON.parse(localStorage.getItem("shoppingCart") || "[]")
+    JSON.parse(localStorage.getItem('shoppingCart') || '[]')
   );
   const [isShoppingCartOpen, setIsShoppingCartOpen] = useState<boolean>(false);
 
@@ -113,64 +113,67 @@ function Shop() {
     setShippingDestination(event.target.value);
   };
 
-  const getShippingCost = (destination: string) => {
-    const numberOfCDs = shoppingCart.filter(
-      (id) => shopItems.find((item) => item.id === id)?.type === "CD"
-    ).length;
-    const numberOfVinyls = shoppingCart.filter(
-      (id) => shopItems.find((item) => item.id === id)?.type === "vinyl"
-    ).length;
+  const getShippingCost = useCallback(
+    (destination: string) => {
+      const numberOfCDs = shoppingCart.filter(
+        (id) => shopItems.find((item) => item.id === id)?.type === 'CD'
+      ).length;
+      const numberOfVinyls = shoppingCart.filter(
+        (id) => shopItems.find((item) => item.id === id)?.type === 'vinyl'
+      ).length;
 
-    switch (destination) {
-      case "de":
-        return numberOfVinyls > 0
-          ? SHIPPING_COST_VINYL_DE * numberOfVinyls +
-              SHIPPING_COST_CD_DE *
-                Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-          : numberOfCDs > 0
-          ? SHIPPING_COST_CD_DE *
-            Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-          : 0;
-      case "eu":
-        return numberOfVinyls > 0
-          ? SHIPPING_COST_VINYL_EU * numberOfVinyls +
-              SHIPPING_COST_CD_EU *
-                Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-          : numberOfCDs > 0
-          ? SHIPPING_COST_CD_EU *
-            Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-          : 0;
-      case "uk":
-        return numberOfVinyls > 0
-          ? SHIPPING_COST_VINYL_UK_AND_IR * numberOfVinyls +
-              SHIPPING_COST_CD_UK_AND_IR *
-                Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-          : numberOfCDs > 0
-          ? SHIPPING_COST_CD_UK_AND_IR *
-            Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-          : 0;
-      case "world":
-        return numberOfVinyls > 0
-          ? SHIPPING_COST_VINYL_WORLD * numberOfVinyls +
-              SHIPPING_COST_CD_WORLD *
-                Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-          : numberOfCDs > 0
-          ? SHIPPING_COST_CD_WORLD *
-            Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-          : 0;
-      default:
-        return 0;
-    }
-  };
+      switch (destination) {
+        case 'de':
+          return numberOfVinyls > 0
+            ? SHIPPING_COST_VINYL_DE * numberOfVinyls +
+                SHIPPING_COST_CD_DE *
+                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            : numberOfCDs > 0
+            ? SHIPPING_COST_CD_DE *
+              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            : 0;
+        case 'eu':
+          return numberOfVinyls > 0
+            ? SHIPPING_COST_VINYL_EU * numberOfVinyls +
+                SHIPPING_COST_CD_EU *
+                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            : numberOfCDs > 0
+            ? SHIPPING_COST_CD_EU *
+              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            : 0;
+        case 'uk':
+          return numberOfVinyls > 0
+            ? SHIPPING_COST_VINYL_UK_AND_IR * numberOfVinyls +
+                SHIPPING_COST_CD_UK_AND_IR *
+                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            : numberOfCDs > 0
+            ? SHIPPING_COST_CD_UK_AND_IR *
+              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            : 0;
+        case 'world':
+          return numberOfVinyls > 0
+            ? SHIPPING_COST_VINYL_WORLD * numberOfVinyls +
+                SHIPPING_COST_CD_WORLD *
+                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            : numberOfCDs > 0
+            ? SHIPPING_COST_CD_WORLD *
+              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            : 0;
+        default:
+          return 0;
+      }
+    },
+    [shoppingCart, shopItems]
+  );
 
-  const getTotalPrice = () => {
+  const getTotalPrice = useCallback(() => {
     return (
       shoppingCart.reduce((acc, id) => {
         const item = shopItems.find((item) => item.id === id);
         return acc + (item?.price || 0);
       }, 0) + getShippingCost(shippingDestination)
     ).toFixed(2);
-  };
+  }, [shoppingCart, shopItems, shippingDestination, getShippingCost]);
 
   const [totalPrice, setTotalPrice] = useState<string>(getTotalPrice());
   const [shippingCost, setShippingCost] = useState<string>(
@@ -180,24 +183,26 @@ function Shop() {
   useEffect(() => {
     setTotalPrice(getTotalPrice());
     setShippingCost(getShippingCost(shippingDestination).toFixed(2));
-  }, [shippingDestination, shoppingCart, shopItems]);
+  }, [
+    shippingDestination,
+    shoppingCart,
+    shopItems,
+    getTotalPrice,
+    getShippingCost,
+  ]);
 
   useEffect(() => {
-    localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+    localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
 
-    if (isShoppingCartOpen) {
-      // document.body.style.overflow = "hidden";
-      shoppingCart.length === 0 && setIsShoppingCartOpen(false);
+    if (isShoppingCartOpen && shoppingCart.length === 0) {
+      setIsShoppingCartOpen(false);
     }
-    // else {
-    //   document.body.style.overflow = "auto";
-    // }
-  }, [shoppingCart]);
+  }, [shoppingCart, isShoppingCartOpen]);
 
   const handlePayPalSuccess = (name: string) => {
     setIsShoppingCartOpen(false);
     setShoppingCart([]);
-    setClientName(name ?? "");
+    setClientName(name ?? '');
   };
 
   return (
@@ -205,9 +210,9 @@ function Shop() {
       {clientName && (
         <div className="successModal">
           <h2>
-            {clientName !== ""
+            {clientName !== ''
               ? `Thank you, ${clientName}, for your purchase!`
-              : "Thank you for your purchase!"}
+              : 'Thank you for your purchase!'}
           </h2>
           <p>
             I will prepare and send your order as fast as possible. Check your
@@ -277,7 +282,7 @@ function Shop() {
         </div>
         <div
           className="shoppingCart"
-          style={{ display: isShoppingCartOpen ? "flex" : "none" }}
+          style={{ display: isShoppingCartOpen ? 'flex' : 'none' }}
         >
           <div className="shoppingCartHeader">
             <h2>Shopping Cart</h2>
@@ -338,9 +343,9 @@ function Shop() {
                 ...[...new Set(shoppingCart)].map((id) => {
                   const item = shopItems.find((item) => item.id === id);
                   return {
-                    description: item?.title || "",
+                    description: item?.title || '',
                     amount: {
-                      currency_code: "EUR",
+                      currency_code: 'EUR',
                       value: item?.price || 0,
                     },
                     quantity: shoppingCart.filter((itemId) => itemId === id)
@@ -348,9 +353,9 @@ function Shop() {
                   };
                 }),
                 {
-                  description: "Shipping",
+                  description: 'Shipping',
                   amount: {
-                    currency_code: "EUR",
+                    currency_code: 'EUR',
                     value: getShippingCost(shippingDestination),
                   },
                   quantity: 1,
@@ -392,7 +397,7 @@ function Shop() {
                     ? `${
                         shoppingCart.filter((id) => id === item.id).length
                       } in cart`
-                    : "Add to cart"}
+                    : 'Add to cart'}
                 </button>
               </div>
             );
