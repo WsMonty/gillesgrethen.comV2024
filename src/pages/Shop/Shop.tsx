@@ -16,6 +16,7 @@ import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { IoMdClose } from 'react-icons/io';
+import { formatDateShort } from '../../globals/helpers';
 
 function PayPalCheckout({
   totalPrice,
@@ -193,10 +194,6 @@ function Shop() {
 
   useEffect(() => {
     localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
-
-    if (isShoppingCartOpen && shoppingCart.length === 0) {
-      setIsShoppingCartOpen(false);
-    }
   }, [shoppingCart, isShoppingCartOpen]);
 
   const handlePayPalSuccess = (name: string) => {
@@ -275,7 +272,10 @@ function Shop() {
         </p>
         <div
           className="shopCart"
-          onClick={() => setIsShoppingCartOpen(!isShoppingCartOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsShoppingCartOpen(!isShoppingCartOpen);
+          }}
         >
           <FaShoppingCart size={24} />
           <p className="shopCartLength">{shoppingCart.length}</p>
@@ -292,6 +292,11 @@ function Shop() {
               onClick={() => setIsShoppingCartOpen(false)}
             />
           </div>
+          {shoppingCart.length === 0 && (
+            <p className="shoppingCartEmpty">
+              Your cart is still empty, put some music in here!
+            </p>
+          )}
           {[...new Set(shoppingCart)]
             .sort((a, b) => b - a)
             .map((id) => {
@@ -301,7 +306,16 @@ function Shop() {
               const item = shopItems.find((item) => item.id === id);
               return (
                 <div key={id} className="shoppingCartItem">
-                  <p className="shoppingCartItemTitle">{item?.title}</p>
+                  <div className="shoppingCartItemTitleContainer">
+                    <p className="shoppingCartItemTitle">{item?.title}</p>
+                    {item?.releaseDate &&
+                      new Date(item?.releaseDate) > new Date() && (
+                        <p className="shopItemReleaseDateInfo">
+                          This item will be shipped after{' '}
+                          {formatDateShort(item?.releaseDate)}
+                        </p>
+                      )}
+                  </div>
                   <div className="shoppingCartItemControls">
                     <FaMinus
                       className="shoppingCartItemControl"
@@ -376,12 +390,18 @@ function Shop() {
               <div key={index} className="shopItem">
                 <img src={item.image.url} alt={item.title} />
                 <div className="shopItemInfo">
-                  <div className="shopItemTitle">
+                  <div
+                    className="shopItemTitle"
+                    style={{ marginBottom: '1rem' }}
+                  >
                     <h2>{item.title}</h2>
-                    {item.shortDescription ? (
-                      <p>{item.shortDescription}</p>
-                    ) : (
-                      <br />
+                    {item.shortDescription && <p>{item.shortDescription}</p>}
+                    {`Release date: ${formatDateShort(item.releaseDate)}`}
+                    {new Date(item.releaseDate) > new Date() && (
+                      <p className="shopItemReleaseDateInfo">
+                        This item will be shipped after{' '}
+                        {formatDateShort(item.releaseDate)}
+                      </p>
                     )}
                   </div>
                   <div>

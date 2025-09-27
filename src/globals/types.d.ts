@@ -19,9 +19,10 @@ interface ShopItem {
   shortDescription?: string;
   image: Media;
   price: number;
-  type: "CD" | "vinyl";
+  type: 'CD' | 'vinyl';
   isActive: boolean;
   id: number;
+  releaseDate: string;
 }
 
 interface Gigs {

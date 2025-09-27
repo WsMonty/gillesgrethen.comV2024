@@ -63,6 +63,11 @@
   }
 }
 
+.shopItemReleaseDateInfo {
+  color: red;
+  font-weight: 600;
+}
+
 .shopShippingCostInfo {
   width: 12rem;
   font-size: 1.15rem;
@@ -262,6 +267,7 @@
 
     .shopItems {
       gap: 2rem;
+
       .shopItem {
         width: 100%;
 
