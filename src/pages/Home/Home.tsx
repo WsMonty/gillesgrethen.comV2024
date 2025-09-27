@@ -64,6 +64,22 @@ function Home() {
                           {children}
                         </a>
                       ),
+                      p: ({ children, node, ...props }) => {
+                        if (!node?.position)
+                          return <p {...props}>{children}</p>;
+                        const isLastParagraph =
+                          node.position.end.offset === newsItem.newsText.length;
+                        return (
+                          <p
+                            style={
+                              !isLastParagraph ? { marginBottom: '1em' } : {}
+                            }
+                            {...props}
+                          >
+                            {children}
+                          </p>
+                        );
+                      },
                     }}
                   >
                     {newsItem.newsText}
