@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import './Home.scss';
-import { getNews } from '../../contentful';
-import { NEWS_LIMIT, MOBILE_BREAKPOINT } from '../../globals/constants';
-import { formatDate } from '../../globals/helpers';
-import headerImage from '../../assets/GG_websiteHeader.jpg';
-import Markdown from 'react-markdown';
+import { useEffect, useState } from "react";
+import "./Home.scss";
+import { getNews } from "../../contentful";
+import { NEWS_LIMIT, MOBILE_BREAKPOINT } from "../../globals/constants";
+import { formatDate } from "../../globals/helpers";
+import headerImage from "../../assets/GG_websiteHeader.jpg";
+import Markdown from "react-markdown";
 
 function Home() {
   const [news, setNews] = useState<News[]>([]);
@@ -26,7 +26,7 @@ function Home() {
       {isMobile ? (
         <div className="mobileHeader">
           <p>
-            {' '}
+            {" "}
             Jazz guitarist and composer from Luxembourg, currently based in
             Hamburg.
           </p>
@@ -55,8 +55,8 @@ function Home() {
           <div key={index}>
             <div className="news">
               <div className="newsContent">
-                <h2>{newsItem.title}</h2>
-                <p className="newsText">
+                <div className="newsContentText">
+                  <h2>{newsItem.title}</h2>
                   <Markdown
                     components={{
                       a: ({ children, ...props }) => (
@@ -72,7 +72,7 @@ function Home() {
                         return (
                           <p
                             style={
-                              !isLastParagraph ? { marginBottom: '1em' } : {}
+                              !isLastParagraph ? { marginBottom: "1em" } : {}
                             }
                             {...props}
                           >
@@ -84,31 +84,36 @@ function Home() {
                   >
                     {newsItem.newsText}
                   </Markdown>
-                </p>
-                <h3>
-                  {isMobile ? (
-                    <div className="mobileNewsAction">
+                  <h3>
+                    {isMobile ? (
+                      <div className="mobileNewsAction">
+                        <a
+                          className="link"
+                          href={newsItem.link}
+                          target="_blank"
+                        >
+                          {newsItem.linkText ||
+                            "Click here for more information!"}
+                        </a>
+                        {newsItem.media && (
+                          <img
+                            className="image-hover"
+                            src={newsItem.media.url}
+                            alt={newsItem.media.title}
+                            onClick={() => {
+                              window.open(newsItem.link, "_blank");
+                            }}
+                          />
+                        )}
+                      </div>
+                    ) : (
                       <a className="link" href={newsItem.link} target="_blank">
                         {newsItem.linkText ||
-                          'Click here for more information!'}
+                          "Click here for more information!"}
                       </a>
-                      {newsItem.media && (
-                        <img
-                          className="image-hover"
-                          src={newsItem.media.url}
-                          alt={newsItem.media.title}
-                          onClick={() => {
-                            window.open(newsItem.link, '_blank');
-                          }}
-                        />
-                      )}
-                    </div>
-                  ) : (
-                    <a className="link" href={newsItem.link} target="_blank">
-                      {newsItem.linkText || 'Click here for more information!'}
-                    </a>
-                  )}
-                </h3>
+                    )}
+                  </h3>
+                </div>
                 <p className="date">{formatDate(newsItem.date)}</p>
               </div>
               {!isMobile && newsItem.media && (
@@ -117,7 +122,7 @@ function Home() {
                   src={newsItem.media.url}
                   alt={newsItem.media.title}
                   onClick={() => {
-                    window.open(newsItem.link, '_blank');
+                    window.open(newsItem.link, "_blank");
                   }}
                 />
               )}
