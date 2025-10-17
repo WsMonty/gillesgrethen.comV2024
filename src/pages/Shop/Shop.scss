@@ -1,4 +1,4 @@
-@use '../../globals/globals.scss' as *;
+@use "../../globals/globals.scss" as *;
 
 .shop {
   min-height: 90vh;
@@ -69,8 +69,15 @@
 }
 
 .shopShippingCostInfo {
-  width: 12rem;
+  width: 100%;
   font-size: 1.15rem;
+}
+
+.shopShippingInfoContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
 }
 
 .shopShippingInfo {
@@ -86,12 +93,11 @@
   }
 
   .shopShippingSelect {
-    width: 20%;
     padding: 0.75rem;
-    border: 1px solid $main-text-color;
+    border: 1px solid $main-bg-color;
     border-radius: $border-radius;
     background-color: transparent;
-    color: $main-text-color;
+    color: $main-bg-color;
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -114,38 +120,96 @@
       color: $main-text-color;
     }
   }
+
+  .warning {
+    border-color: red;
+  }
 }
 
 .shopCart {
   position: relative;
   cursor: pointer;
+  background-color: $accent-color-blue;
+  width: fit-content;
+  border-radius: $border-radius;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: $main-bg-color;
+
+  .shopCartText {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .shopCartIconContainer {
+    position: relative;
+  }
+
+  .shopCartIcon {
+    z-index: 1;
+  }
 
   .shopCartLength {
     position: absolute;
-    top: -1rem;
-    right: -0.5rem;
-    font-size: 1rem;
-    color: $accent-color-blue;
+    top: -0.4rem;
+    right: -0.75rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    background-color: $accent-color-blue;
+    border-radius: 50%;
+    padding: 0.1rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    scale: 0.8;
   }
 }
 
 .shoppingCart {
   position: absolute;
-  width: 26rem;
+  width: 40rem;
   min-height: 20rem;
-  max-height: 70vh;
-  overflow-y: auto;
+  max-height: 80vh;
+  z-index: 100;
+  right: -30rem;
+  top: 4rem;
   background-color: $main-text-color;
   border-radius: $border-radius;
   color: $main-bg-color;
   padding: 1rem;
-  z-index: 100;
-  right: -10rem;
-  top: 4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 
+  .shoppingCartContent {
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scrollbar-color: $accent-color-blue $main-text-color;
+    scrollbar-width: thin;
+    padding-right: 0.5rem;
+
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $main-text-color;
+
+      border-radius: $border-radius;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $accent-color-blue;
+      border-radius: $border-radius;
+    }
+  }
   .shoppingCartItemTitle {
     font-size: 1.25rem;
   }
@@ -223,7 +287,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 3;
 }
 
 .successModal {
@@ -320,11 +384,22 @@
     }
   }
 
+  .mobileShoppingCartContainer {
+    background-color: $main-bg-color;
+    padding: 1rem 1rem;
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+    width: 100vw;
+    z-index: 2;
+    position: fixed;
+    top: 4rem;
+  }
+
   .shoppingCart {
     position: fixed;
     width: 80vw;
     min-height: 50vh;
-    max-height: 70vh;
+    max-height: 90vh;
     overflow-y: auto;
     background-color: $main-text-color;
     border-radius: $border-radius;

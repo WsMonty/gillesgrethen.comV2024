@@ -1,4 +1,4 @@
-@import "../../globals/globals.scss";
+@use "../../globals/globals.scss" as *;
 
 .blog {
   min-height: 90vh;

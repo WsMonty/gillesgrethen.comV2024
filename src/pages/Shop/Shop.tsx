@@ -1,102 +1,17 @@
-import { useEffect, useState, useCallback } from 'react';
-import './Shop.scss';
-import { getShopItems } from '../../contentful';
-import {
-  MOBILE_BREAKPOINT,
-  SHIPPING_COST_CD_DE,
-  SHIPPING_COST_CD_EU,
-  SHIPPING_COST_CD_UK_AND_IR,
-  SHIPPING_COST_CD_WORLD,
-  SHIPPING_COST_VINYL_DE,
-  SHIPPING_COST_VINYL_EU,
-  SHIPPING_COST_VINYL_UK_AND_IR,
-  SHIPPING_COST_VINYL_WORLD,
-} from '../../globals/constants';
-import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
-import { PayPalButtons } from '@paypal/react-paypal-js';
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
-import { IoMdClose } from 'react-icons/io';
-import { formatDateShort } from '../../globals/helpers';
-
-function PayPalCheckout({
-  totalPrice,
-  allArticles,
-  onSuccess,
-}: {
-  totalPrice: string;
-  allArticles: {
-    description: string;
-    amount: {
-      currency_code: string;
-      value: number;
-    };
-    quantity: number;
-  }[];
-  onSuccess: (name: string) => void;
-}) {
-  return (
-    <PayPalScriptProvider
-      options={{
-        clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-        currency: 'EUR',
-      }}
-    >
-      <PayPalButtons
-        key={totalPrice}
-        createOrder={(_data, actions) => {
-          return actions.order.create({
-            intent: 'CAPTURE',
-            purchase_units: [
-              {
-                amount: {
-                  currency_code: 'EUR',
-                  value: totalPrice,
-                  breakdown: {
-                    item_total: {
-                      currency_code: 'EUR',
-                      value: totalPrice,
-                    },
-                  },
-                },
-                items: allArticles.map((article) => ({
-                  name: article.description,
-                  unit_amount: {
-                    currency_code: 'EUR',
-                    value: article.amount.value.toString(),
-                  },
-                  quantity: article.quantity.toString(),
-                })),
-              },
-            ],
-          });
-        }}
-        onApprove={(_data, actions) => {
-          if (!actions.order)
-            return Promise.reject('Order actions not available');
-          return actions.order.capture().then((details) => {
-            const payerName = details?.payer?.name?.given_name || 'customer';
-            onSuccess(payerName);
-          });
-        }}
-        style={{
-          layout: 'vertical',
-          color: 'black',
-          shape: 'rect',
-          label: 'paypal',
-        }}
-      />
-    </PayPalScriptProvider>
-  );
-}
+import { useEffect, useState } from "react";
+import "./Shop.scss";
+import { getShopItems } from "../../contentful";
+import { formatDateShort } from "../../globals/helpers";
+import ShoppingCart from "./ShoppinCart";
 
 function Shop() {
-  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
-  const [shippingDestination, setShippingDestination] = useState<string>('de');
+  const [shippingDestination, setShippingDestination] = useState<string | null>(
+    null
+  );
 
   const [shoppingCart, setShoppingCart] = useState<number[]>(
-    JSON.parse(localStorage.getItem('shoppingCart') || '[]')
+    JSON.parse(localStorage.getItem("shoppingCart") || "[]")
   );
   const [isShoppingCartOpen, setIsShoppingCartOpen] = useState<boolean>(false);
 
@@ -108,98 +23,14 @@ function Shop() {
       .catch((error) => console.log(error));
   }, []);
 
-  const handleShippingChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setShippingDestination(event.target.value);
-  };
-
-  const getShippingCost = useCallback(
-    (destination: string) => {
-      const numberOfCDs = shoppingCart.filter(
-        (id) => shopItems.find((item) => item.id === id)?.type === 'CD'
-      ).length;
-      const numberOfVinyls = shoppingCart.filter(
-        (id) => shopItems.find((item) => item.id === id)?.type === 'vinyl'
-      ).length;
-
-      switch (destination) {
-        case 'de':
-          return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_DE * numberOfVinyls +
-                SHIPPING_COST_CD_DE *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-            : numberOfCDs > 0
-            ? SHIPPING_COST_CD_DE *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-            : 0;
-        case 'eu':
-          return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_EU * numberOfVinyls +
-                SHIPPING_COST_CD_EU *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-            : numberOfCDs > 0
-            ? SHIPPING_COST_CD_EU *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-            : 0;
-        case 'uk':
-          return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_UK_AND_IR * numberOfVinyls +
-                SHIPPING_COST_CD_UK_AND_IR *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-            : numberOfCDs > 0
-            ? SHIPPING_COST_CD_UK_AND_IR *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-            : 0;
-        case 'world':
-          return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_WORLD * numberOfVinyls +
-                SHIPPING_COST_CD_WORLD *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
-            : numberOfCDs > 0
-            ? SHIPPING_COST_CD_WORLD *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
-            : 0;
-        default:
-          return 0;
-      }
-    },
-    [shoppingCart, shopItems]
-  );
-
-  const getTotalPrice = useCallback(() => {
-    return (
-      shoppingCart.reduce((acc, id) => {
-        const item = shopItems.find((item) => item.id === id);
-        return acc + (item?.price || 0);
-      }, 0) + getShippingCost(shippingDestination)
-    ).toFixed(2);
-  }, [shoppingCart, shopItems, shippingDestination, getShippingCost]);
-
-  const [totalPrice, setTotalPrice] = useState<string>(getTotalPrice());
-  const [shippingCost, setShippingCost] = useState<string>(
-    getShippingCost(shippingDestination).toFixed(2)
-  );
-
   useEffect(() => {
-    setTotalPrice(getTotalPrice());
-    setShippingCost(getShippingCost(shippingDestination).toFixed(2));
-  }, [
-    shippingDestination,
-    shoppingCart,
-    shopItems,
-    getTotalPrice,
-    getShippingCost,
-  ]);
-
-  useEffect(() => {
-    localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+    localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
   }, [shoppingCart, isShoppingCartOpen]);
 
   const handlePayPalSuccess = (name: string) => {
     setIsShoppingCartOpen(false);
     setShoppingCart([]);
-    setClientName(name ?? '');
+    setClientName(name ?? "");
   };
 
   return (
@@ -207,9 +38,9 @@ function Shop() {
       {clientName && (
         <div className="successModal">
           <h2>
-            {clientName !== ''
+            {clientName !== ""
               ? `Thank you, ${clientName}, for your purchase!`
-              : 'Thank you for your purchase!'}
+              : "Thank you for your purchase!"}
           </h2>
           <p>
             I will prepare and send your order as fast as possible. Check your
@@ -229,157 +60,16 @@ function Shop() {
           onClick={() => setIsShoppingCartOpen(false)}
         ></div>
       )}
-      <div className="shopShippingInfo">
-        {isMobile ? (
-          <div className="shopShippingInfoMobile">
-            <p className="shopShippingInfoText">Shipping to:</p>
-            <select
-              className="shopShippingSelect"
-              onChange={handleShippingChange}
-              value={shippingDestination}
-              name="shipping"
-              id="shipping"
-            >
-              <option value="de">Germany</option>
-              <option value="eu">Europe (other than Germany)</option>
-              <option value="uk">UK & Ireland</option>
-              <option value="world">World</option>
-            </select>
-          </div>
-        ) : (
-          <>
-            <p className="shopShippingInfoText">Shipping to:</p>
-            <select
-              className="shopShippingSelect"
-              onChange={handleShippingChange}
-              value={shippingDestination}
-              name="shipping"
-              id="shipping"
-            >
-              <option value="de">Germany</option>
-              <option value="eu">Europe (other than Germany)</option>
-              <option value="uk">UK & Ireland</option>
-              <option value="world">World</option>
-            </select>
-          </>
-        )}
-
-        <p className="shopShippingCostInfo shopShippingCostInfoText">
-          Total shipping cost: {shippingCost}€
-        </p>
-        <p className="shopShippingCostInfo shopShippingCostInfoText">
-          Total price: {totalPrice}€
-        </p>
-        <div
-          className="shopCart"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsShoppingCartOpen(!isShoppingCartOpen);
-          }}
-        >
-          <FaShoppingCart size={24} />
-          <p className="shopCartLength">{shoppingCart.length}</p>
-        </div>
-        <div
-          className="shoppingCart"
-          style={{ display: isShoppingCartOpen ? 'flex' : 'none' }}
-        >
-          <div className="shoppingCartHeader">
-            <h2>Shopping Cart</h2>
-            <IoMdClose
-              className="shoppingCartClose"
-              size={24}
-              onClick={() => setIsShoppingCartOpen(false)}
-            />
-          </div>
-          {shoppingCart.length === 0 && (
-            <p className="shoppingCartEmpty">
-              Your cart is still empty, put some music in here!
-            </p>
-          )}
-          {[...new Set(shoppingCart)]
-            .sort((a, b) => b - a)
-            .map((id) => {
-              const count = shoppingCart.filter(
-                (itemId) => itemId === id
-              ).length;
-              const item = shopItems.find((item) => item.id === id);
-              return (
-                <div key={id} className="shoppingCartItem">
-                  <div className="shoppingCartItemTitleContainer">
-                    <p className="shoppingCartItemTitle">{item?.title}</p>
-                    {item?.releaseDate &&
-                      new Date(item?.releaseDate) > new Date() && (
-                        <p className="shopItemReleaseDateInfo">
-                          This item will be shipped after{' '}
-                          {formatDateShort(item?.releaseDate)}
-                        </p>
-                      )}
-                  </div>
-                  <div className="shoppingCartItemControls">
-                    <FaMinus
-                      className="shoppingCartItemControl"
-                      size={12}
-                      onClick={() =>
-                        setShoppingCart((prev) => {
-                          const index = prev.indexOf(id);
-                          if (index === -1) return prev;
-                          return [
-                            ...prev.slice(0, index),
-                            ...prev.slice(index + 1),
-                          ];
-                        })
-                      }
-                    />
-                    <span>{count}</span>
-                    <FaPlus
-                      className="shoppingCartItemControl"
-                      size={12}
-                      onClick={() => setShoppingCart((prev) => [...prev, id])}
-                    />
-                    <FaTrash
-                      className="shoppingCartItemControl"
-                      size={12}
-                      onClick={() =>
-                        setShoppingCart((prev) =>
-                          prev.filter((itemId) => itemId !== id)
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          {shoppingCart.length > 0 && (
-            <PayPalCheckout
-              totalPrice={totalPrice}
-              allArticles={[
-                ...[...new Set(shoppingCart)].map((id) => {
-                  const item = shopItems.find((item) => item.id === id);
-                  return {
-                    description: item?.title || '',
-                    amount: {
-                      currency_code: 'EUR',
-                      value: item?.price || 0,
-                    },
-                    quantity: shoppingCart.filter((itemId) => itemId === id)
-                      .length,
-                  };
-                }),
-                {
-                  description: 'Shipping',
-                  amount: {
-                    currency_code: 'EUR',
-                    value: getShippingCost(shippingDestination),
-                  },
-                  quantity: 1,
-                },
-              ]}
-              onSuccess={handlePayPalSuccess}
-            />
-          )}
-        </div>
-      </div>
+      <ShoppingCart
+        shippingDestination={shippingDestination}
+        setShippingDestination={setShippingDestination}
+        isShoppingCartOpen={isShoppingCartOpen}
+        setIsShoppingCartOpen={setIsShoppingCartOpen}
+        shoppingCart={shoppingCart}
+        setShoppingCart={setShoppingCart}
+        shopItems={shopItems}
+        handlePayPalSuccess={handlePayPalSuccess}
+      />
       <div className="shopItems">
         {shopItems
           .sort((a, b) => b.id - a.id)
@@ -392,14 +82,14 @@ function Shop() {
                 <div className="shopItemInfo">
                   <div
                     className="shopItemTitle"
-                    style={{ marginBottom: '1rem' }}
+                    style={{ marginBottom: "1rem" }}
                   >
                     <h2>{item.title}</h2>
                     {item.shortDescription && <p>{item.shortDescription}</p>}
                     {`Release date: ${formatDateShort(item.releaseDate)}`}
                     {new Date(item.releaseDate) > new Date() && (
                       <p className="shopItemReleaseDateInfo">
-                        This item will be shipped after{' '}
+                        This item will be shipped after{" "}
                         {formatDateShort(item.releaseDate)}
                       </p>
                     )}
@@ -417,7 +107,7 @@ function Shop() {
                     ? `${
                         shoppingCart.filter((id) => id === item.id).length
                       } in cart`
-                    : 'Add to cart'}
+                    : "Add to cart"}
                 </button>
               </div>
             );
