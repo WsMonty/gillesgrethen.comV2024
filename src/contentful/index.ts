@@ -1,7 +1,7 @@
 export async function getNews() {
   const query = `
     query {
-    newsCollection {
+    newsCollection(limit: 3, order: date_DESC) {
       items {
         title
         date
@@ -23,10 +23,10 @@ export async function getNews() {
     import.meta.env.VITE_CONTENTFUL_SPACE_ID
   }`;
   const fetchOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
@@ -64,10 +64,10 @@ export async function getShopItems() {
     import.meta.env.VITE_CONTENTFUL_SPACE_ID
   }`;
   const fetchOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
@@ -108,10 +108,10 @@ export async function getAbout() {
     import.meta.env.VITE_CONTENTFUL_SPACE_ID
   }`;
   const fetchOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
@@ -148,10 +148,10 @@ export async function getProjects() {
     import.meta.env.VITE_CONTENTFUL_SPACE_ID
   }`;
   const fetchOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
@@ -185,10 +185,10 @@ export async function getBlogPosts() {
     import.meta.env.VITE_CONTENTFUL_SPACE_ID
   }`;
   const fetchOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
