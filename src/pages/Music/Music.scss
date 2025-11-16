@@ -1,4 +1,4 @@
-@use "../../globals/globals.scss" as *;
+@use '../../globals/globals.scss' as *;
 
 .music {
   min-height: 90vh;
@@ -34,19 +34,20 @@
       }
 
       .gigDate {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 15%;
-        height: 6rem;
-        color: $accent-color-blue;
+        color: $main-text-color;
 
         border: 0.25px solid $accent-color-blue;
         border-radius: $border-radius;
 
         p {
           white-space: nowrap;
+          font-size: 1.2rem;
         }
       }
 
@@ -74,6 +75,22 @@
           color: $main-bg-color;
         }
       }
+
+      .gigLinkContainer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 0.25px solid $accent-color-blue;
+        border-radius: $border-radius-small;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        width: fit-content;
+
+        > * {
+          font-size: 0.8rem;
+          color: $accent-color-blue;
+        }
+      }
     }
 
     .gigSummary {
@@ -90,6 +107,7 @@
 
     .gigTBA {
       color: $accent-color-blue;
+      font-size: 0.8rem;
     }
 
     .gigLocation {
@@ -152,11 +170,12 @@
         width: 90%;
         margin: 0;
         padding: 0;
-      }
 
-      .gigDate {
-        flex-direction: column;
-        padding-inline: 2rem;
+        .gigDate {
+          flex-direction: column;
+          padding-inline: 2rem;
+          width: 40%;
+        }
       }
     }
 
