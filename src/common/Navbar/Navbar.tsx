@@ -12,6 +12,9 @@ function Navbar() {
       <a className="navbar-link" href="/music">
         MUSIC
       </a>
+      <a className="navbar-link" href="/linklists">
+        LINKS
+      </a>
       <a className="navbar-link" href="/shop">
         SHOP
       </a>

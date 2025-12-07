@@ -1,0 +1,62 @@
+@use "../../globals/globals.scss" as *;
+
+.linkLists {
+  min-height: 90vh;
+  padding: 2em;
+
+  .listName {
+    color: $accent-color-pink;
+  }
+
+  .socialLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    font-size: 2em;
+  }
+
+  .linkList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 0.65em;
+  }
+
+  .linkItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .linkDescription {
+    font-size: 0.6em;
+  }
+
+  .linkListItems {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 1.25em;
+  }
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .linkLists {
+    padding: 0rem 2rem;
+
+    .listName {
+      font-size: 1.25em;
+    }
+
+    .linkListItems {
+      font-size: 1em;
+    }
+
+    .backToLinkLists {
+      font-size: 0.75em;
+      margin-top: 2rem;
+    }
+  }
+}

@@ -7,6 +7,7 @@ import About from "../pages/About/About";
 import Chroma from "../pages/Chroma/Chroma";
 import Blog from "../pages/Blog/Blog";
 import Gigs from "../pages/Music/Gigs";
+import LinkLists from "../pages/LinkLists/LinkLists";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "/gigs",
         element: <Gigs />,
+      },
+      {
+        path: "/linklists/*",
+        element: <LinkLists />,
       },
     ],
   },
