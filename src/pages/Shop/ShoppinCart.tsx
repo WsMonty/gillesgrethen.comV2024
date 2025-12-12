@@ -1,16 +1,13 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { formatDateShort } from "../../globals/helpers";
 import PayPalCheckout from "./PaypalCheckout";
 import "./Shop.scss";
 import {
+  MAX_CDS_PER_PACKAGE,
+  MAX_CDS_PER_PACKAGE_WITH_VINYL,
+  MAX_VINYLS_PER_PACKAGE,
   SHIPPING_COST_CD_DE,
   SHIPPING_COST_CD_EU,
   SHIPPING_COST_CD_UK_AND_IR,
@@ -53,42 +50,50 @@ const ShoppingCart = ({
         (id) => shopItems.find((item) => item.id === id)?.type === "vinyl"
       ).length;
 
+      const numberOfPackagesWithVinyl = Math.ceil(
+        numberOfVinyls / MAX_VINYLS_PER_PACKAGE
+      );
+
+      const numberOfPackagesWithCD =
+        numberOfCDs <= MAX_CDS_PER_PACKAGE_WITH_VINYL
+          ? 0
+          : Math.ceil(
+              (numberOfCDs - MAX_CDS_PER_PACKAGE_WITH_VINYL) /
+                MAX_CDS_PER_PACKAGE_WITH_VINYL
+            );
+
+      const numberOfPackagesWithCDWithoutVinyl = Math.ceil(
+        numberOfCDs / MAX_CDS_PER_PACKAGE
+      );
+
       switch (destination) {
         case "de":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_DE * numberOfVinyls +
-                SHIPPING_COST_CD_DE *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            ? SHIPPING_COST_VINYL_DE * numberOfPackagesWithVinyl +
+                SHIPPING_COST_CD_DE * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_DE *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            ? SHIPPING_COST_CD_DE * numberOfPackagesWithCDWithoutVinyl
             : 0;
         case "eu":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_EU * numberOfVinyls +
-                SHIPPING_COST_CD_EU *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            ? SHIPPING_COST_VINYL_EU * numberOfPackagesWithVinyl +
+                SHIPPING_COST_CD_EU * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_EU *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            ? SHIPPING_COST_CD_EU * numberOfPackagesWithCDWithoutVinyl
             : 0;
         case "uk":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_UK_AND_IR * numberOfVinyls +
-                SHIPPING_COST_CD_UK_AND_IR *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            ? SHIPPING_COST_VINYL_UK_AND_IR * numberOfPackagesWithVinyl +
+                SHIPPING_COST_CD_UK_AND_IR * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_UK_AND_IR *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            ? SHIPPING_COST_CD_UK_AND_IR * numberOfPackagesWithCDWithoutVinyl
             : 0;
         case "world":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_WORLD * numberOfVinyls +
-                SHIPPING_COST_CD_WORLD *
-                  Math.ceil(Math.max(0, numberOfCDs - numberOfVinyls * 2) / 3)
+            ? SHIPPING_COST_VINYL_WORLD * numberOfPackagesWithVinyl +
+                SHIPPING_COST_CD_WORLD * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_WORLD *
-              Math.ceil(numberOfCDs > 2 ? numberOfCDs / 3 : 1)
+            ? SHIPPING_COST_CD_WORLD * numberOfPackagesWithCDWithoutVinyl
             : 0;
         default:
           return 0;
@@ -106,21 +111,13 @@ const ShoppingCart = ({
     ).toFixed(2);
   }, [shoppingCart, shopItems, shippingDestination, getShippingCost]);
 
-  const [totalPrice, setTotalPrice] = useState<string>(getTotalPrice());
-  const [shippingCost, setShippingCost] = useState<string>(
-    getShippingCost(shippingDestination).toFixed(2)
+  const shippingCost = useMemo(
+    () => getShippingCost(shippingDestination).toFixed(2),
+    [shippingDestination, getShippingCost]
   );
 
-  useEffect(() => {
-    setTotalPrice(getTotalPrice());
-    setShippingCost(getShippingCost(shippingDestination).toFixed(2));
-  }, [
-    shippingDestination,
-    shoppingCart,
-    shopItems,
-    getTotalPrice,
-    getShippingCost,
-  ]);
+  const totalPrice = useMemo(() => getTotalPrice(), [getTotalPrice]);
+
   const handleShippingChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
