@@ -9,15 +9,18 @@ import { BsFileMusic } from "react-icons/bs";
 enum ListName {
   LIST_VIEW = "linklists",
   COMPOSITION_FILM = "composition-film",
+  NOSTALGIE_REVIEWS = "nostalgie-reviews",
 }
 
 const ListNameURLMap = {
   [ListName.COMPOSITION_FILM]: "/linklists/composition-film",
+  [ListName.NOSTALGIE_REVIEWS]: "/linklists/nostalgie-reviews",
 };
 
 const ListNameMap = {
   [ListName.LIST_VIEW]: "Links",
   [ListName.COMPOSITION_FILM]: "Composition | Film Music examples",
+  [ListName.NOSTALGIE_REVIEWS]: "Nostalgie | Reviews",
 };
 
 interface LinkList {
@@ -106,6 +109,27 @@ const linkList: LinkList[] = [
         description:
           "Re-score for the short film 'The Collector' by Dimitris Argyriou during the Fusion Film Scoring Workshops (Thessaloniki, Greece, 2022).",
         url: "https://www.youtube.com/watch?v=I6e8oLQ1MBM",
+      },
+    ],
+  },
+  {
+    name: ListName.NOSTALGIE_REVIEWS,
+    links: [
+      {
+        name: "hifi-ifas.de, Victoriah Szirmai (in German)",
+        url: "https://hifi-ifas.de/musik-tipp-gilles-grethen-big-band-nostalgie-und-weitere-musikalische-last-minute-geschenktipps",
+      },
+      {
+        name: "jazz-fun.de, Jacek Brun (in German)",
+        url: "https://www.jazz-fun.de/gilles-grethen-big-band-nostalgie.html",
+      },
+      {
+        name: "Interview with Jeff Herr at Radio 100,7 (in Luxembourgish)",
+        url: "https://100komma7.lu/show/Een-zwee-Jazz/202510302100/episode/E-raife-Klang-teschent-Energie-a-Sensibiliteit?pd=search",
+      },
+      {
+        name: "jazzma.hu, Szegedy-Maszák Blanka (in Hungarian)",
+        url: "https://www.jazzma.hu/lemezpolc/kulfoldi-eloadok/grethen-gilles/nostalgie/kritika/grethen-gilles-nostalgie",
       },
     ],
   },
