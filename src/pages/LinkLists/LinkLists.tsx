@@ -116,19 +116,23 @@ const linkList: LinkList[] = [
     name: ListName.NOSTALGIE_REVIEWS,
     links: [
       {
-        name: "hifi-ifas.de, Victoriah Szirmai (in German)",
+        name: "hifi-ifas.de | Victoriah Szirmai",
+        description: "Review in German",
         url: "https://hifi-ifas.de/musik-tipp-gilles-grethen-big-band-nostalgie-und-weitere-musikalische-last-minute-geschenktipps",
       },
       {
-        name: "jazz-fun.de, Jacek Brun (in German)",
+        name: "jazz-fun.de | Jacek Brun",
+        description: "Review in German",
         url: "https://www.jazz-fun.de/gilles-grethen-big-band-nostalgie.html",
       },
       {
-        name: "Interview with Jeff Herr at Radio 100,7 (in Luxembourgish)",
+        name: "Radio 100,7 | Jeff Herr",
+        description: "Audio interview in Luxembourgish",
         url: "https://100komma7.lu/show/Een-zwee-Jazz/202510302100/episode/E-raife-Klang-teschent-Energie-a-Sensibiliteit?pd=search",
       },
       {
-        name: "jazzma.hu, Szegedy-Maszák Blanka (in Hungarian)",
+        name: "jazzma.hu | Szegedy-Maszák Blanka",
+        description: "Review in Hungarian",
         url: "https://www.jazzma.hu/lemezpolc/kulfoldi-eloadok/grethen-gilles/nostalgie/kritika/grethen-gilles-nostalgie",
       },
     ],
@@ -167,6 +171,7 @@ const LinkLists = () => {
                   alignItems: "center",
                   gap: "1rem",
                   maxWidth: "fit-content",
+                  cursor: "pointer",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
