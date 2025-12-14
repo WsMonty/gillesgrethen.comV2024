@@ -346,7 +346,9 @@ const ShoppingCart = ({
                     description: item?.title || "",
                     amount: {
                       currency_code: "EUR",
-                      value: item?.price || 0,
+                      value:
+                        (item?.price || 0) *
+                        (1 - (appliedPromo?.discountPercentage || 0) / 100),
                     },
                     quantity: shoppingCart.filter((itemId) => itemId === id)
                       .length,
