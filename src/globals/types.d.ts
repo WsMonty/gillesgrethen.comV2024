@@ -19,7 +19,7 @@ interface ShopItem {
   shortDescription?: string;
   image: Media;
   price: number;
-  type: 'CD' | 'vinyl';
+  type: "CD" | "vinyl";
   isActive: boolean;
   id: number;
   releaseDate: string;
@@ -68,4 +68,11 @@ interface GigInfo {
   iCalUID: string;
   sequence: number;
   eventType: string;
+}
+
+interface PromoCode {
+  code: string;
+  discountPercentage: number;
+  validUntil: Date;
+  validFrom: Date;
 }

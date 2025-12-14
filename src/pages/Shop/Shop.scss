@@ -325,6 +325,49 @@
   }
 }
 
+.promoCodeContainer {
+  margin: "1rem 0";
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .promoCodeLabel {
+    margin-right: 0.5rem;
+  }
+  .promoCodeInput {
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.5rem;
+    border: 1px solid $main-bg-color;
+    border-radius: $border-radius-small;
+    background-color: transparent;
+    color: $main-bg-color;
+  }
+  .promoCodeButton {
+    padding: 0.35rem 0.75rem;
+    margin-right: 0.5rem;
+    border: none;
+    border-radius: $border-radius-small;
+    background-color: $accent-color-blue;
+    color: $main-bg-color;
+    cursor: pointer;
+  }
+
+  .promoCodeInvalid {
+    color: red;
+    font-size: 1rem;
+  }
+
+  .promoCodeValid {
+    color: $accent-color-blue;
+    font-size: 1rem;
+  }
+}
+
+.promoCodeSaved {
+  font-size: 1rem;
+  color: $accent-color-blue;
+}
+
 @media (max-width: $mobile-breakpoint) {
   .shop {
     padding: 0.5rem;
@@ -431,5 +474,15 @@
 
   .successModal {
     padding: 1rem;
+  }
+
+  .promoCodeContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .promoCodeLabel {
+      margin-right: 0;
+    }
   }
 }

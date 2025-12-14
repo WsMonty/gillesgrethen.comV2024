@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { formatDateShort } from "../../globals/helpers";
@@ -8,6 +14,7 @@ import {
   MAX_CDS_PER_PACKAGE,
   MAX_CDS_PER_PACKAGE_WITH_VINYL,
   MAX_VINYLS_PER_PACKAGE,
+  PROMO_CODES,
   SHIPPING_COST_CD_DE,
   SHIPPING_COST_CD_EU,
   SHIPPING_COST_CD_UK_AND_IR,
@@ -39,6 +46,10 @@ const ShoppingCart = ({
   shopItems,
   handlePayPalSuccess,
 }: ShoppingCartProps) => {
+  const [promoCode, setPromoCode] = useState<string>("");
+  const [promoValid, setPromoValid] = useState<boolean | null>(null);
+  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+
   const getShippingCost = useCallback(
     (destination: string | null) => {
       if (!destination) return 0;
@@ -102,14 +113,31 @@ const ShoppingCart = ({
     [shoppingCart, shopItems]
   );
 
-  const getTotalPrice = useCallback(() => {
-    return (
-      shoppingCart.reduce((acc, id) => {
+  const getTotalPrice = useCallback(
+    (doNotApplyPromo: boolean = false) => {
+      const totalPriceWithoutShipping = shoppingCart.reduce((acc, id) => {
         const item = shopItems.find((item) => item.id === id);
         return acc + (item?.price || 0);
-      }, 0) + getShippingCost(shippingDestination)
-    ).toFixed(2);
-  }, [shoppingCart, shopItems, shippingDestination, getShippingCost]);
+      }, 0);
+
+      const promoDiscount = appliedPromo?.discountPercentage || 0;
+      const totalPriceWithPromo = doNotApplyPromo
+        ? totalPriceWithoutShipping
+        : totalPriceWithoutShipping * (1 - promoDiscount / 100);
+
+      const shippingCost = getShippingCost(shippingDestination);
+
+      const totalPriceWithShipping = totalPriceWithPromo + shippingCost;
+      return totalPriceWithShipping.toFixed(2);
+    },
+    [
+      shoppingCart,
+      shopItems,
+      shippingDestination,
+      getShippingCost,
+      appliedPromo?.discountPercentage,
+    ]
+  );
 
   const shippingCost = useMemo(
     () => getShippingCost(shippingDestination).toFixed(2),
@@ -117,6 +145,10 @@ const ShoppingCart = ({
   );
 
   const totalPrice = useMemo(() => getTotalPrice(), [getTotalPrice]);
+  const totalPriceWithPromo = useMemo(
+    () => getTotalPrice(true),
+    [getTotalPrice]
+  );
 
   const handleShippingChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -215,6 +247,52 @@ const ShoppingCart = ({
               );
             })}
 
+          {/* Promo Code input */}
+          <div className="promoCodeContainer withDividerTop">
+            <label className="promoCodeLabel" htmlFor="promoCodeInput">
+              Promo code:
+            </label>
+            <div className="promoCodeInputContainer">
+              <input
+                type="text"
+                id="promoCodeInput"
+                value={promoCode}
+                onChange={(e) => {
+                  setPromoCode(e.target.value.toUpperCase());
+                  setPromoValid(null);
+                }}
+                placeholder="Enter code"
+                className="promoCodeInput"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const promo = PROMO_CODES.find(
+                    (pc) =>
+                      pc.code === promoCode &&
+                      new Date() >= pc.validFrom &&
+                      new Date() <= pc.validUntil
+                  );
+                  setPromoValid(!!promo);
+                  setAppliedPromo(promo || null);
+                }}
+                className="promoCodeButton"
+              >
+                Apply
+              </button>
+            </div>
+            {promoValid === false && (
+              <span className="promoCodeInvalid">
+                Invalid or expired promo code
+              </span>
+            )}
+            {promoValid === true && appliedPromo && (
+              <span className="promoCodeValid">
+                Congrats, you saved: -{appliedPromo.discountPercentage}%!
+              </span>
+            )}
+          </div>
+
           {shoppingCart.length > 0 && (
             <>
               <p className="shopShippingCostInfo shopShippingCostInfoText withDividerTop">
@@ -225,7 +303,14 @@ const ShoppingCart = ({
                 }`}
               </p>
               <p className="shopShippingCostInfo shopShippingCostInfoText">
-                Total price: {totalPrice}€
+                Total price: {totalPrice}€{" "}
+                <span className="promoCodeSaved">
+                  {appliedPromo
+                    ? ` (Saved ${
+                        Number(totalPriceWithPromo) - Number(totalPrice)
+                      }€ with promo code)`
+                    : ""}
+                </span>
               </p>
 
               <div className="shopShippingInfoContainer">

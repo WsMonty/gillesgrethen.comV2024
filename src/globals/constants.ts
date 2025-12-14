@@ -15,3 +15,12 @@ export const MAX_CDS_PER_PACKAGE = 3;
 export const MAX_CDS_PER_PACKAGE_WITH_VINYL = 5;
 
 export const MOBILE_BREAKPOINT = 768;
+
+export const PROMO_CODES: PromoCode[] = [
+  {
+    code: "XMAS15",
+    discountPercentage: 15,
+    validFrom: new Date(2025, 11, 14, 0, 0, 0),
+    validUntil: new Date(2025, 11, 15, 23, 59, 59),
+  },
+];
