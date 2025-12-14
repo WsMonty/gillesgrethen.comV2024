@@ -24,6 +24,7 @@ import {
   SHIPPING_COST_VINYL_UK_AND_IR,
   SHIPPING_COST_VINYL_WORLD,
 } from "../../globals/constants";
+import { useLockBodyScroll } from "../../common/hooks/useLockBodyScroll";
 
 interface ShoppingCartProps {
   shippingDestination: string | null;
@@ -49,6 +50,8 @@ const ShoppingCart = ({
   const [promoCode, setPromoCode] = useState<string>("");
   const [promoValid, setPromoValid] = useState<boolean | null>(null);
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+
+  useLockBodyScroll(isShoppingCartOpen);
 
   const getShippingCost = useCallback(
     (destination: string | null) => {
