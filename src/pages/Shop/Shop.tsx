@@ -4,6 +4,7 @@ import { getShopItems } from "../../contentful";
 import { formatDateShort } from "../../globals/helpers";
 import ShoppingCart from "./ShoppinCart";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { useLockBodyScroll } from "../../common/hooks/useLockBodyScroll";
 
 function Shop() {
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
@@ -15,6 +16,7 @@ function Shop() {
     JSON.parse(localStorage.getItem("shoppingCart") || "[]")
   );
   const [isShoppingCartOpen, setIsShoppingCartOpen] = useState<boolean>(false);
+  useLockBodyScroll(isShoppingCartOpen);
 
   const [clientName, setClientName] = useState<string | null>(null);
 
