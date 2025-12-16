@@ -10,20 +10,6 @@ import { IoMdClose } from "react-icons/io";
 import { formatDateShort } from "../../globals/helpers";
 import PayPalCheckout from "./PaypalCheckout";
 import "./Shop.scss";
-import {
-  MAX_CDS_PER_PACKAGE,
-  MAX_CDS_PER_PACKAGE_WITH_VINYL,
-  MAX_VINYLS_PER_PACKAGE,
-  PROMO_CODES,
-  SHIPPING_COST_CD_DE,
-  SHIPPING_COST_CD_EU,
-  SHIPPING_COST_CD_UK_AND_IR,
-  SHIPPING_COST_CD_WORLD,
-  SHIPPING_COST_VINYL_DE,
-  SHIPPING_COST_VINYL_EU,
-  SHIPPING_COST_VINYL_UK_AND_IR,
-  SHIPPING_COST_VINYL_WORLD,
-} from "../../globals/constants";
 
 interface ShoppingCartProps {
   shippingDestination: string | null;
@@ -34,6 +20,7 @@ interface ShoppingCartProps {
   setShoppingCart: Dispatch<SetStateAction<number[]>>;
   shopItems: ShopItem[];
   handlePayPalSuccess: (name: string) => void;
+  shopConfig: ShopConfig;
 }
 
 const ShoppingCart = ({
@@ -45,6 +32,7 @@ const ShoppingCart = ({
   setShoppingCart,
   shopItems,
   handlePayPalSuccess,
+  shopConfig,
 }: ShoppingCartProps) => {
   const [promoCode, setPromoCode] = useState<string>("");
   const [promoValid, setPromoValid] = useState<boolean | null>(null);
@@ -62,55 +50,56 @@ const ShoppingCart = ({
       ).length;
 
       const numberOfPackagesWithVinyl = Math.ceil(
-        numberOfVinyls / MAX_VINYLS_PER_PACKAGE
+        numberOfVinyls / shopConfig.maxVinylsPerPackage
       );
 
       const numberOfPackagesWithCD =
-        numberOfCDs <= MAX_CDS_PER_PACKAGE_WITH_VINYL
+        numberOfCDs <= shopConfig.maxCDsPerPackageWithVinyl
           ? 0
           : Math.ceil(
-              (numberOfCDs - MAX_CDS_PER_PACKAGE_WITH_VINYL) /
-                MAX_CDS_PER_PACKAGE_WITH_VINYL
+              (numberOfCDs - shopConfig.maxCDsPerPackageWithVinyl) /
+                shopConfig.maxCDsPerPackageWithVinyl
             );
 
       const numberOfPackagesWithCDWithoutVinyl = Math.ceil(
-        numberOfCDs / MAX_CDS_PER_PACKAGE
+        numberOfCDs / shopConfig.maxCDsPerPackage
       );
 
       switch (destination) {
         case "de":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_DE * numberOfPackagesWithVinyl +
-                SHIPPING_COST_CD_DE * numberOfPackagesWithCD
+            ? shopConfig.shippingCostVinylDe * numberOfPackagesWithVinyl +
+                shopConfig.shippingCostCdDe * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_DE * numberOfPackagesWithCDWithoutVinyl
+            ? shopConfig.shippingCostCdDe * numberOfPackagesWithCDWithoutVinyl
             : 0;
         case "eu":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_EU * numberOfPackagesWithVinyl +
-                SHIPPING_COST_CD_EU * numberOfPackagesWithCD
+            ? shopConfig.shippingCostVinylEu * numberOfPackagesWithVinyl +
+                shopConfig.shippingCostCdEu * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_EU * numberOfPackagesWithCDWithoutVinyl
+            ? shopConfig.shippingCostCdEu * numberOfPackagesWithCDWithoutVinyl
             : 0;
         case "uk":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_UK_AND_IR * numberOfPackagesWithVinyl +
-                SHIPPING_COST_CD_UK_AND_IR * numberOfPackagesWithCD
+            ? shopConfig.shippingCostVinylUk * numberOfPackagesWithVinyl +
+                shopConfig.shippingCostCdUk * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_UK_AND_IR * numberOfPackagesWithCDWithoutVinyl
+            ? shopConfig.shippingCostCdUk * numberOfPackagesWithCDWithoutVinyl
             : 0;
         case "world":
           return numberOfVinyls > 0
-            ? SHIPPING_COST_VINYL_WORLD * numberOfPackagesWithVinyl +
-                SHIPPING_COST_CD_WORLD * numberOfPackagesWithCD
+            ? shopConfig.shippingCostVinylWorld * numberOfPackagesWithVinyl +
+                shopConfig.shippingCostCdWorld * numberOfPackagesWithCD
             : numberOfCDs > 0
-            ? SHIPPING_COST_CD_WORLD * numberOfPackagesWithCDWithoutVinyl
+            ? shopConfig.shippingCostCdWorld *
+              numberOfPackagesWithCDWithoutVinyl
             : 0;
         default:
           return 0;
       }
     },
-    [shoppingCart, shopItems]
+    [shoppingCart, shopItems, shopConfig]
   );
 
   const getTotalPrice = useCallback(
@@ -267,8 +256,8 @@ const ShoppingCart = ({
               <button
                 type="button"
                 onClick={() => {
-                  const promo = PROMO_CODES.find(
-                    (pc) =>
+                  const promo = (shopConfig?.promoCodes ?? []).find(
+                    (pc: PromoCode) =>
                       pc.code === promoCode &&
                       new Date() >= pc.validFrom &&
                       new Date() <= pc.validUntil
@@ -306,9 +295,9 @@ const ShoppingCart = ({
                 Total price: {totalPrice}€{" "}
                 <span className="promoCodeSaved">
                   {appliedPromo
-                    ? ` (Saved ${
+                    ? ` (Saved ${(
                         Number(totalPriceWithPromo) - Number(totalPrice)
-                      }€ with promo code)`
+                      ).toFixed(2)}€ with promo code)`
                     : ""}
                 </span>
               </p>

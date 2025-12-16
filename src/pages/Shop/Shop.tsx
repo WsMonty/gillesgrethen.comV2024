@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Shop.scss";
-import { getShopItems } from "../../contentful";
+import { getShopConfig, getShopItems } from "../../contentful";
 import { formatDateShort } from "../../globals/helpers";
 import ShoppingCart from "./ShoppinCart";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -20,10 +20,18 @@ function Shop() {
 
   const [clientName, setClientName] = useState<string | null>(null);
 
+  const [shopConfig, setShopConfig] = useState<ShopConfig | null>(null);
+
+  useEffect(() => {
+    getShopConfig()
+      .then((response: ShopConfig) => setShopConfig(response))
+      .catch((error: Error) => console.log(error));
+  }, []);
+
   useEffect(() => {
     getShopItems()
-      .then((response) => setShopItems(response))
-      .catch((error) => console.log(error));
+      .then((response: ShopItem[]) => setShopItems(response))
+      .catch((error: Error) => console.log(error));
   }, []);
 
   useEffect(() => {
@@ -69,16 +77,28 @@ function Shop() {
             onClick={() => setIsShoppingCartOpen(false)}
           ></div>
         )}
-        <ShoppingCart
-          shippingDestination={shippingDestination}
-          setShippingDestination={setShippingDestination}
-          isShoppingCartOpen={isShoppingCartOpen}
-          setIsShoppingCartOpen={setIsShoppingCartOpen}
-          shoppingCart={shoppingCart}
-          setShoppingCart={setShoppingCart}
-          shopItems={shopItems}
-          handlePayPalSuccess={handlePayPalSuccess}
-        />
+        {shopConfig?.disclaimer &&
+          shopConfig?.disclaimerDateFrom &&
+          shopConfig?.disclaimerDateTo &&
+          new Date() >= shopConfig?.disclaimerDateFrom &&
+          new Date() <= shopConfig?.disclaimerDateTo && (
+            <div className="shopDisclaimer">
+              <p className="shopDisclaimerText"> {shopConfig.disclaimer}</p>
+            </div>
+          )}
+        {shopConfig && (
+          <ShoppingCart
+            shippingDestination={shippingDestination}
+            setShippingDestination={setShippingDestination}
+            isShoppingCartOpen={isShoppingCartOpen}
+            setIsShoppingCartOpen={setIsShoppingCartOpen}
+            shoppingCart={shoppingCart}
+            setShoppingCart={setShoppingCart}
+            shopItems={shopItems}
+            handlePayPalSuccess={handlePayPalSuccess}
+            shopConfig={shopConfig}
+          />
+        )}
         <div className="shopItems">
           {shopItems
             .sort((a, b) => b.id - a.id)

@@ -10,8 +10,6 @@
   justify-content: center;
   gap: 1rem;
 
-  position: relative;
-
   .footer-logo {
     cursor: pointer;
 
@@ -33,6 +31,13 @@
   .footer {
     justify-content: flex-start;
     padding-left: 2rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.104);
+
+    background-color: $main-bg-color;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
 
     .footer-logo {
       &:hover {

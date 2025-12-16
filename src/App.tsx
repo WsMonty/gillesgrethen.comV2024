@@ -8,7 +8,9 @@ function App() {
   return (
     <>
       {location !== "/blog" && location !== "/chroma" && <Navbar />}
-      <Outlet />
+      <div className="app-content">
+        <Outlet />
+      </div>
       <Footer />
     </>
   );
