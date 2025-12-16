@@ -394,15 +394,17 @@
     max-width: 100dvw;
     padding: 0rem;
     overflow-x: hidden;
-    margin-top: 8rem;
+    margin-top: 6rem;
 
     .shopDisclaimer {
       max-width: 90%;
       margin: 0 auto;
+      margin-top: 2rem;
     }
 
     .shopItems {
       gap: 2rem;
+      padding-top: 0;
 
       .shopItem {
         width: 100%;
