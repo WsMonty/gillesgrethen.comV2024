@@ -2,13 +2,19 @@
 
 .footer {
   height: 4rem;
-  width: 100%;
+  width: 100dvw;
   border-top: 1px solid rgba(255, 255, 255, 0.104);
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+
+  .footer-social-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
 
   .footer-logo {
     cursor: pointer;
@@ -24,14 +30,17 @@
   .footer-copyright {
     position: absolute;
     right: 1rem;
+    white-space: nowrap;
   }
 }
 
 @media (max-width: 768px) {
   .footer {
-    justify-content: flex-start;
-    padding-left: 2rem;
+    max-width: 100dvw;
+    padding-inline: 1.5rem 1rem;
     border-top: 2px solid rgba(255, 255, 255, 0.104);
+    justify-content: space-evenly;
+    gap: 1rem;
 
     background-color: $main-bg-color;
     position: fixed;
@@ -44,6 +53,11 @@
         color: unset !important;
         scale: unset !important;
       }
+    }
+
+    .footer-copyright {
+      position: relative;
+      right: 0;
     }
   }
 }
