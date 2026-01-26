@@ -269,3 +269,54 @@ export async function getBlogPosts() {
 
   return response.data.blogPostCollection.items;
 }
+
+export const getLinkLists = async (): Promise<LinkList> => {
+  const query = `
+  query {
+    linkTreeCollection {
+      items {
+        name
+        description
+        path
+        image {
+          url
+        }
+        linksCollection {
+          items {
+            name
+            description
+            url
+            icon
+          }
+        }
+      }
+    }
+  }
+  `;
+
+  const fetchUrl = `https://graphql.contentful.com/content/v1/spaces/${
+    import.meta.env.VITE_CONTENTFUL_SPACE_ID
+  }`;
+  const fetchOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query,
+    }),
+  };
+
+  const response = await fetch(fetchUrl, fetchOptions)
+    .then((response) => response.json())
+    .catch((err) => console.log(err));
+
+  return response.data.linkTreeCollection.items.map((item: LinkTreeAPI) => ({
+    ...item,
+    imageUrl: item?.image?.url,
+    links: item?.linksCollection.items.map((link: LinkTreeLink) => ({
+      ...link,
+    })),
+  })) as LinkList;
+};

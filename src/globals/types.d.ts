@@ -114,3 +114,32 @@ interface GigInfo {
   sequence: number;
   eventType: string;
 }
+
+type LinkTreeAPIList = LinkTreeAPI[];
+
+interface LinkTreeAPI {
+  name: string;
+  description?: string;
+  path: string;
+  image?: Media;
+  linksCollection: {
+    items: LinkTreeLink[];
+  };
+}
+
+type LinkList = LinkTree[];
+
+interface LinkTree {
+  name: string;
+  description?: string;
+  path: string;
+  imageUrl?: string;
+  links: LinkTreeLink[];
+}
+
+interface LinkTreeLink {
+  name: string;
+  description?: string;
+  url: string;
+  icon?: string;
+}
