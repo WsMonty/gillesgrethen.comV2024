@@ -9,6 +9,7 @@ import Blog from "../pages/Blog/Blog";
 import Gigs from "../pages/Music/Gigs";
 import NewLinkList from "../pages/LinkLists/NewLinkList";
 import FinnishCards from "../pages/finnish-cards/FinnishCards";
+import FinnishCardsPrivacy from "../pages/finnish-cards/FinnishCardsPrivacy";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/finnish-cards",
         element: <FinnishCards />,
+      },
+      {
+        path: "/finnish-cards/privacy",
+        element: <FinnishCardsPrivacy />,
       },
     ],
   },
