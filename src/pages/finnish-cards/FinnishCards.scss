@@ -1,0 +1,32 @@
+@use "../../globals/globals.scss" as *;
+
+.page {
+  min-height: 90vh;
+  padding: 2rem;
+  font-size: 1.75rem;
+
+  .cards-title {
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 1em;
+  }
+
+  p {
+    font-size: 0.75em;
+  }
+
+  .cards-content {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1em;
+    border: 1px solid $accent-color-blue;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    background-color: $main-bg-color;
+    color: $main-text-color;
+  }
+}

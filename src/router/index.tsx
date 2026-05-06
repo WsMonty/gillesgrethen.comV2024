@@ -8,6 +8,7 @@ import Chroma from "../pages/Chroma/Chroma";
 import Blog from "../pages/Blog/Blog";
 import Gigs from "../pages/Music/Gigs";
 import NewLinkList from "../pages/LinkLists/NewLinkList";
+import FinnishCards from "../pages/finnish-cards/FinnishCards";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/linklists/*",
         element: <NewLinkList />,
+      },
+      {
+        path: "/finnish-cards",
+        element: <FinnishCards />,
       },
     ],
   },

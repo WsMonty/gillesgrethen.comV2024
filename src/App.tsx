@@ -7,7 +7,9 @@ function App() {
 
   return (
     <>
-      {location !== "/blog" && location !== "/chroma" && <Navbar />}
+      {location !== "/blog" &&
+        location !== "/chroma" &&
+        location !== "/finnish-cards" && <Navbar />}
       <div className="app-content">
         <Outlet />
       </div>
