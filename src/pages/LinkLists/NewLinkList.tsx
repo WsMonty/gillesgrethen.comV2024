@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LINK_LISTS_PATH } from "../../globals/constants";
+import { LINK_LISTS_PATH, LISTEN_PATH } from "../../globals/constants";
 import "./NewLinkList.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -19,7 +19,7 @@ import {
 import { FaMicrophoneLines } from "react-icons/fa6";
 import { BsFileMusic } from "react-icons/bs";
 import { SiApplemusic, SiTidal } from "react-icons/si";
-import { getLinkLists } from "../../contentful";
+import { getAutoLinkTrees, getLinkLists } from "../../contentful";
 
 const iconMap: Record<string, React.ComponentType> = {
   FaSpotify,
@@ -51,6 +51,9 @@ const getIcon = (icon?: string) => {
 const NewLinkList = () => {
   const [links, setLinks] = useState<LinkTree[]>([]);
   const [linksAvailable, setLinksAvailable] = useState<boolean>(false);
+  const [autoLinkTrees, setAutoLinkTrees] = useState<AutoLinkTreeList>([]);
+  const [autoLinkTreesAvailable, setAutoLinkTreesAvailable] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -59,6 +62,13 @@ const NewLinkList = () => {
       setLinksAvailable(true);
     };
     fetchLinks();
+
+    const fetchAutoLinkTrees = async () => {
+      const response = await getAutoLinkTrees();
+      setAutoLinkTrees(response);
+      setAutoLinkTreesAvailable(true);
+    };
+    fetchAutoLinkTrees();
   }, []);
 
   const location = useLocation();
@@ -86,7 +96,7 @@ const NewLinkList = () => {
     }
   }, [listName, navigate, links, linksAvailable]);
 
-  return links.length > 0 ? (
+  return linksAvailable && autoLinkTreesAvailable ? (
     <div className="linkList-container">
       {!isListCollectionView && (
         <div className="backButton" onClick={() => handleLinkClick()}>
@@ -96,21 +106,59 @@ const NewLinkList = () => {
       )}
 
       {isListCollectionView ? (
-        <div className="linkCardContainer">
-          {links.map((link) => (
-            <div
-              key={link.path}
-              className="linkCard"
-              onClick={() => handleLinkClick(link.path)}
-            >
-              {link.imageUrl && <img src={link.imageUrl} alt={link.name} />}
-              <div className="linkCardContent">
-                <h3 className="linkCardTitle">{link.name}</h3>
-                <p>{link.description}</p>
+        <>
+          {autoLinkTrees.length > 0 && (
+            <section className="autoLinkTreeSection">
+              <h2 className="linkSectionTitle">Listen</h2>
+              <div className="autoLinkTreeContainer">
+                {autoLinkTrees.map((release) => (
+                  <a
+                    key={release.slug}
+                    className="autoLinkTreeCard"
+                    href={`/${LISTEN_PATH}/${release.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {release.coverImageUrl && (
+                      <img src={release.coverImageUrl} alt={release.title} />
+                    )}
+                    <div className="autoLinkTreeCardContent">
+                      <p className="autoLinkTreeCardTitle">{release.title}</p>
+                      {release.artist && (
+                        <p className="autoLinkTreeCardArtist">
+                          {release.artist}
+                        </p>
+                      )}
+                    </div>
+                  </a>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
+            </section>
+          )}
+
+          {links.length > 0 && (
+            <section className="linkCardSection">
+              <h2 className="linkSectionTitle">Link Lists</h2>
+              <div className="linkCardContainer">
+                {links.map((link) => (
+                  <div
+                    key={link.path}
+                    className="linkCard"
+                    onClick={() => handleLinkClick(link.path)}
+                  >
+                    {link.imageUrl && (
+                      <img src={link.imageUrl} alt={link.name} />
+                    )}
+                    <div className="linkCardContent">
+                      <h3 className="linkCardTitle">{link.name}</h3>
+                      <p>{link.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </>
       ) : (
         <div className="linkTreesContainer">
           <div className="linkTree">

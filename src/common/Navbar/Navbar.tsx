@@ -1,23 +1,34 @@
+import { useLocation } from "react-router-dom";
 import "./Navbar.scss";
 
+const links = [
+  { href: "/", label: "HOME" },
+  { href: "/about", label: "ABOUT" },
+  { href: "/music", label: "MUSIC" },
+  { href: "/linklists", label: "LINKS" },
+  { href: "/shop", label: "SHOP" },
+];
+
 function Navbar() {
+  const { pathname } = useLocation();
+
   return (
     <div className="navbar">
-      <a className="navbar-link" href="/">
-        HOME
-      </a>
-      <a className="navbar-link" href="/about">
-        ABOUT
-      </a>
-      <a className="navbar-link" href="/music">
-        MUSIC
-      </a>
-      <a className="navbar-link" href="/linklists">
-        LINKS
-      </a>
-      <a className="navbar-link" href="/shop">
-        SHOP
-      </a>
+      {links.map(({ href, label }) => {
+        const isActive =
+          href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+        return (
+          <a
+            key={href}
+            className="navbar-link"
+            data-active={isActive}
+            href={href}
+          >
+            {label}
+          </a>
+        );
+      })}
     </div>
   );
 }

@@ -320,3 +320,84 @@ export const getLinkLists = async (): Promise<LinkList> => {
     })),
   })) as LinkList;
 };
+
+export const getAutoLinkTrees = async (): Promise<AutoLinkTreeList> => {
+  const query = `
+  query {
+    autoLinkTreeCollection {
+      items {
+        title
+        artist
+        slug
+        sourceUrl
+        isActive
+        coverImage {
+          url
+        }
+      }
+    }
+  }
+  `;
+
+  const fetchUrl = `https://graphql.contentful.com/content/v1/spaces/${
+    import.meta.env.VITE_CONTENTFUL_SPACE_ID
+  }`;
+  const fetchOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query,
+    }),
+  };
+
+  const response = await fetch(fetchUrl, fetchOptions)
+    .then((response) => response.json())
+    .catch((err) => console.log(err));
+
+  return response.data.autoLinkTreeCollection.items
+    .filter((item: AutoLinkTreeAPI) => item.isActive !== false)
+    .map((item: AutoLinkTreeAPI) => ({
+      ...item,
+      coverImageUrl: item.coverImage?.url,
+    })) as AutoLinkTreeList;
+};
+
+export const getAutoLinkTreeBySlug = async (
+  slug: string
+): Promise<AutoLinkTree | undefined> => {
+  const query = `
+  query GetAutoLinkTreeBySlug($slug: String!) {
+    autoLinkTreeCollection(where: { slug: $slug }, limit: 1) {
+      items {
+        slug
+        sourceUrl
+        isActive
+      }
+    }
+  }
+  `;
+
+  const fetchUrl = `https://graphql.contentful.com/content/v1/spaces/${
+    import.meta.env.VITE_CONTENTFUL_SPACE_ID
+  }`;
+  const fetchOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      variables: { slug },
+    }),
+  };
+
+  const response = await fetch(fetchUrl, fetchOptions)
+    .then((response) => response.json())
+    .catch((err) => console.log(err));
+
+  return response.data.autoLinkTreeCollection.items[0];
+};

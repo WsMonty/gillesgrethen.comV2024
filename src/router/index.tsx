@@ -8,6 +8,7 @@ import Chroma from "../pages/Chroma/Chroma";
 import Blog from "../pages/Blog/Blog";
 import Gigs from "../pages/Music/Gigs";
 import NewLinkList from "../pages/LinkLists/NewLinkList";
+import Listen from "../pages/Listen/Listen";
 import FinnishCards from "../pages/finnish-cards/FinnishCards";
 import FinnishCardsPrivacy from "../pages/finnish-cards/FinnishCardsPrivacy";
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "/linklists/*",
         element: <NewLinkList />,
+      },
+      {
+        path: "/listen/:slug",
+        element: <Listen />,
       },
       {
         path: "/finnish-cards",

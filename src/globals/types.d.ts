@@ -143,3 +143,23 @@ interface LinkTreeLink {
   url: string;
   icon?: string;
 }
+
+type AutoLinkTreeList = AutoLinkTree[];
+
+interface AutoLinkTreeAPI {
+  title: string;
+  artist: string;
+  slug: string;
+  sourceUrl: string;
+  isActive?: boolean;
+  coverImage?: Media;
+}
+
+interface AutoLinkTree {
+  title?: string;
+  artist?: string;
+  slug: string;
+  sourceUrl: string;
+  isActive?: boolean;
+  coverImageUrl?: string;
+}
